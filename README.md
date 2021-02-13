@@ -4,11 +4,9 @@
 npm install antdpackaging --save
 ~~~
 
-```
 <p align="center">
   <img width="900" src="./src/assets/example.png">
 </p>
-```
 ### 使用
 ~~~javascript
 // 加载样式
