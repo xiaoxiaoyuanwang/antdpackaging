@@ -14,6 +14,8 @@ import { FormComponent } from 'antdpackaging'
 ~~~
 
 ~~~bash
+//git地址
+https://github.com/xiaoxiaoyuanwang/antdpackaging.git
 //启动本地环境
 npm run stroybook
 
