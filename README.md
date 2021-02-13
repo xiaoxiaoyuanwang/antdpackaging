@@ -152,4 +152,11 @@ npm run stroybook
 
 // build可发布静态文件
 npm run build
+// 本地连调 antdpackaging项目
+npm link
+
+// 本地项目
+npm link antdpackaging
+// 相对路劲
+npm link ../antdpackaging/node_modules/react
 ~~~
