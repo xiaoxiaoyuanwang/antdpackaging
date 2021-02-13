@@ -157,6 +157,6 @@ npm link
 
 // 本地项目
 npm link antdpackaging
-// 相对路劲
+// 相对路径
 npm link ../antdpackaging/node_modules/react
 ~~~
