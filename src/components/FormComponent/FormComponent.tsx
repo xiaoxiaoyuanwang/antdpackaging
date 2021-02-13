@@ -6,6 +6,8 @@ import {
   Row,
   Col,
   Select,
+  Checkbox,
+  Radio,
   Tooltip as TooltipAnt,
 } from 'antd';
 import {
@@ -13,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import moment from 'moment'
 import zhCN from 'antd/lib/locale/zh_CN';
-import { checkTypeBackArray, checkTypeBackString } from '../utils/commonUtils'
+import { checkTypeBackArray, checkTypeBackString } from '../../utils/commonUtils'
 import { FormComponentItemProps } from './FormComponentItem'
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
@@ -141,6 +143,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
             const classesCol = classNames('antdpackaging_col', itemSec.colClassName)
             const classesLabel = classNames('antdpackaging_label', itemSec.labelClassName)
             const classesStatus = classNames('antdpackaging_status', itemSec.labelClassName)
+            const classesForm = classNames(itemSec.formClassName)
             if (itemSec.type == 'buttons') {
               return (
                 <Col
@@ -187,22 +190,28 @@ export const FormComponent: FC<BaseProps> = (props) => {
                     <div style={{ flex: 1, textAlign: 'left' }}>
                       {itemSec.options &&
                         itemSec.options.map((itemOption: any, indexOption: number) => {
-                          const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.statusItemClassName, {
+                          const keyres = itemSec.optionsObj && itemSec.optionsObj.key
+                                      ? itemOption[itemSec.optionsObj.key]
+                                      : itemOption.key
+                          const valres = itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? itemOption[itemSec.optionsObj.value]
+                                      : itemOption.value
+                          const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
                             "selButton": checkTypeBackArray(currentObj[itemSec.key]).indexOf(
-                              (itemOption.key).toString()
+                              (keyres).toString()
                             ) > -1 ||
-                              (checkTypeBackArray(currentObj[itemSec.key]).length == 0 && itemOption.key == '')
+                              (checkTypeBackArray(currentObj[itemSec.key]).length == 0 && keyres == '')
 
                           })
                           return (
                             <div
                               onClick={() => {
-                                styleStatus(itemOption.key, itemSec);
+                                styleStatus(keyres, itemSec);
                               }}
                               key={indexOption}
                               className={classesStatusItem}
                             >
-                              {itemOption.value}
+                              {valres}
                             </div>
                           );
                         })}
@@ -242,10 +251,11 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ) : null}
                       ：
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div className="antdpackaging_form_wrapper">
                       {itemSec.type == 'text' ? itemSec.key : null}
                       {itemSec.type == 'input' ? (
                         <Input
+                          className={classesForm}
                           size={restProps.size}
                           allowClear={itemSec.allowClear}
                           maxLength={itemSec.maxLength}
@@ -259,6 +269,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ) : null}
                       {itemSec.type == 'select' && !itemSec.showSearch ? (
                         <Select
+                          className={classesForm}
                           size={restProps.size}
                           mode={itemSec.mode}
                           allowClear={itemSec.allowClear}
@@ -296,6 +307,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ) : null}
                       {itemSec.type == 'select' && itemSec.showSearch ? (
                         <Select
+                          className={classesForm}
                           size={restProps.size}
                           mode={itemSec.mode}
                           allowClear={itemSec.allowClear}
@@ -335,6 +347,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ) : null}
                       {itemSec.type == 'time' ? (
                         <DatePicker
+                          className={classesForm}
                           size={restProps.size}
                           disabledDate={(e) => { return itemSec.disabledDate ? itemSec.disabledDate(e) : null }}
                           value={itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined}
@@ -348,6 +361,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ) : null}
                       {itemSec.type == 'timeRange' ? (
                         <RangePicker
+                          className={classesForm}
                           disabledDate={(e) => { return itemSec.disabledDate ? itemSec.disabledDate(e) : null }}
                           disabledTime={(_, type) => { return itemSec.disabledTime ? itemSec.disabledTime(_, type) : null }}
                           value={
@@ -366,6 +380,72 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           style={{ width: '100%' }}
                         // placeholder="请选择日期"
                         />
+                      ) : null}
+                      {itemSec.type == 'checkbox' ? (
+                        <Checkbox.Group
+                          style={{ width: '100%', textAlign: "left" }}
+                          className={classesForm}
+                          value={checkTypeBackArray(itemSec.value)}
+                          onChange={e => {
+                            changeFun(e, itemSec);
+                          }}
+                        >
+                          {itemSec.options &&
+                            itemSec.options.map((itemOption: any, indexOption: number) => {
+                              return (
+                                <Checkbox
+                                  disabled={itemOption.disabled}
+                                  value={
+                                    itemSec.optionsObj && itemSec.optionsObj.key
+                                      ? `${itemOption[itemSec.optionsObj.key]}`
+                                      : `${itemOption.key}`
+                                  }
+                                  key={
+                                    itemSec.optionsObj && itemSec.optionsObj.key
+                                      ? itemOption[itemSec.optionsObj.key]
+                                      : itemOption.key
+                                  }
+                                >
+                                  {itemSec.optionsObj && itemSec.optionsObj.value
+                                    ? itemOption[itemSec.optionsObj.value]
+                                    : itemOption.value}
+                                </Checkbox>
+                              );
+                            })}
+                        </Checkbox.Group>
+                      ) : null}
+                      {itemSec.type == 'radio' ? (
+                        <Radio.Group 
+                          style={{ width: '100%', textAlign: "left" }}
+                          className={classesForm}
+                          onChange={e => {
+                            changeFun(e, itemSec);
+                          }}
+                          value={itemSec.value}
+                         >
+                          {itemSec.options &&
+                            itemSec.options.map((itemOption: any, indexOption: number) => {
+                              return (
+                                <Radio
+                                  disabled={itemOption.disabled}
+                                  value={
+                                    itemSec.optionsObj && itemSec.optionsObj.key
+                                      ? `${itemOption[itemSec.optionsObj.key]}`
+                                      : `${itemOption.key}`
+                                  }
+                                  key={
+                                    itemSec.optionsObj && itemSec.optionsObj.key
+                                      ? itemOption[itemSec.optionsObj.key]
+                                      : itemOption.key
+                                  }
+                                >
+                                  {itemSec.optionsObj && itemSec.optionsObj.value
+                                    ? itemOption[itemSec.optionsObj.value]
+                                    : itemOption.value}
+                                </Radio>
+                              );
+                            })}
+                        </Radio.Group>
                       ) : null}
                     </div>
                   </div>

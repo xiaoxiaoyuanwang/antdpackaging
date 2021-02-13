@@ -46,3 +46,8 @@
   border: 1px solid #2593fc;
   display: inline-block;
 }
+.antdpackaging_form_wrapper{
+  display: flex;
+  flex: 1;
+  align-items: center;
+}

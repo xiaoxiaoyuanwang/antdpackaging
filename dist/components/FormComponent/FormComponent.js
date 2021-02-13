@@ -21,11 +21,11 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import React, { useState, useEffect } from 'react';
-import { ConfigProvider, DatePicker, Input, Row, Col, Select, Tooltip as TooltipAnt, } from 'antd';
+import { ConfigProvider, DatePicker, Input, Row, Col, Select, Checkbox, Radio, Tooltip as TooltipAnt, } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
-import { checkTypeBackArray, checkTypeBackString } from '../utils/commonUtils';
+import { checkTypeBackArray, checkTypeBackString } from '../../utils/commonUtils';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 import classNames from 'classnames';
@@ -133,6 +133,7 @@ export var FormComponent = function (props) {
                 var classesCol = classNames('antdpackaging_col', itemSec.colClassName);
                 var classesLabel = classNames('antdpackaging_label', itemSec.labelClassName);
                 var classesStatus = classNames('antdpackaging_status', itemSec.labelClassName);
+                var classesForm = classNames(itemSec.formClassName);
                 if (itemSec.type == 'buttons') {
                     return (React.createElement(Col, { md: itemSec.md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) }, itemSec.key));
                 }
@@ -146,13 +147,19 @@ export var FormComponent = function (props) {
                                 itemSec.label),
                             React.createElement("div", { style: { flex: 1, textAlign: 'left' } }, itemSec.options &&
                                 itemSec.options.map(function (itemOption, indexOption) {
-                                    var classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.statusItemClassName, {
-                                        "selButton": checkTypeBackArray(currentObj[itemSec.key]).indexOf((itemOption.key).toString()) > -1 ||
-                                            (checkTypeBackArray(currentObj[itemSec.key]).length == 0 && itemOption.key == '')
+                                    var keyres = itemSec.optionsObj && itemSec.optionsObj.key
+                                        ? itemOption[itemSec.optionsObj.key]
+                                        : itemOption.key;
+                                    var valres = itemSec.optionsObj && itemSec.optionsObj.value
+                                        ? itemOption[itemSec.optionsObj.value]
+                                        : itemOption.value;
+                                    var classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
+                                        "selButton": checkTypeBackArray(currentObj[itemSec.key]).indexOf((keyres).toString()) > -1 ||
+                                            (checkTypeBackArray(currentObj[itemSec.key]).length == 0 && keyres == '')
                                     });
                                     return (React.createElement("div", { onClick: function () {
-                                            styleStatus(itemOption.key, itemSec);
-                                        }, key: indexOption, className: classesStatusItem }, itemOption.value));
+                                            styleStatus(keyres, itemSec);
+                                        }, key: indexOption, className: classesStatusItem }, valres));
                                 })))));
                 }
                 return (React.createElement(Col, { md: itemSec.md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) },
@@ -166,12 +173,12 @@ export var FormComponent = function (props) {
                                 itemSec.hint ? (React.createElement(TooltipAnt, { placement: "top", title: function () { return React.createElement("div", null, itemSec.hintText); } },
                                     React.createElement(QuestionCircleOutlined, { className: 'antdpackaging_hint' }))) : null,
                                 "\uFF1A"),
-                            React.createElement("div", { style: { flex: 1 } },
+                            React.createElement("div", { className: "antdpackaging_form_wrapper" },
                                 itemSec.type == 'text' ? itemSec.key : null,
-                                itemSec.type == 'input' ? (React.createElement(Input, { size: restProps.size, allowClear: itemSec.allowClear, maxLength: itemSec.maxLength, disabled: itemSec.disabled, placeholder: "\u8BF7\u8F93\u5165", value: itemSec.value, onChange: function (e) {
+                                itemSec.type == 'input' ? (React.createElement(Input, { className: classesForm, size: restProps.size, allowClear: itemSec.allowClear, maxLength: itemSec.maxLength, disabled: itemSec.disabled, placeholder: "\u8BF7\u8F93\u5165", value: itemSec.value, onChange: function (e) {
                                         changeFun(e, itemSec);
                                     } })) : null,
-                                itemSec.type == 'select' && !itemSec.showSearch ? (React.createElement(Select, { size: restProps.size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', value: itemSec.value, onChange: function (e, opt) {
+                                itemSec.type == 'select' && !itemSec.showSearch ? (React.createElement(Select, { className: classesForm, size: restProps.size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', value: itemSec.value, onChange: function (e, opt) {
                                         changeFun(e, itemSec, opt);
                                     } }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
@@ -183,7 +190,7 @@ export var FormComponent = function (props) {
                                             ? itemOption[itemSec.optionsObj.value]
                                             : itemOption.value));
                                     }))) : null,
-                                itemSec.type == 'select' && itemSec.showSearch ? (React.createElement(Select, { size: restProps.size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', showSearch: itemSec.showSearch ? itemSec.showSearch : undefined, value: itemSec.value, onSearch: function (e) { return (itemSec.showSearch && itemSec.onSearch ? itemSec.onSearch(e) : undefined); }, onChange: function (e, opt) {
+                                itemSec.type == 'select' && itemSec.showSearch ? (React.createElement(Select, { className: classesForm, size: restProps.size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', showSearch: itemSec.showSearch ? itemSec.showSearch : undefined, value: itemSec.value, onSearch: function (e) { return (itemSec.showSearch && itemSec.onSearch ? itemSec.onSearch(e) : undefined); }, onChange: function (e, opt) {
                                         changeFun(e, itemSec, opt);
                                     } }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
@@ -195,17 +202,41 @@ export var FormComponent = function (props) {
                                             ? itemOption[itemSec.optionsObj.value]
                                             : itemOption.value));
                                     }))) : null,
-                                itemSec.type == 'time' ? (React.createElement(DatePicker, { size: restProps.size, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, value: itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined, onChange: function (e) {
+                                itemSec.type == 'time' ? (React.createElement(DatePicker, { className: classesForm, size: restProps.size, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, value: itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined, onChange: function (e) {
                                         changeFun(e, itemSec);
                                     }, disabled: itemSec.disabled, style: { width: '100%' }, placeholder: "\u8BF7\u9009\u62E9\u65E5\u671F" })) : null,
-                                itemSec.type == 'timeRange' ? (React.createElement(RangePicker, { disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, disabledTime: function (_, type) { return itemSec.disabledTime ? itemSec.disabledTime(_, type) : null; }, value: itemSec.value && itemSec.value.length > 0
+                                itemSec.type == 'timeRange' ? (React.createElement(RangePicker, { className: classesForm, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, disabledTime: function (_, type) { return itemSec.disabledTime ? itemSec.disabledTime(_, type) : null; }, value: itemSec.value && itemSec.value.length > 0
                                         ? [
                                             moment(itemSec.value[0], itemSec.dateFormat || dateFormat),
                                             moment(itemSec.value[1], itemSec.dateFormat || dateFormat)
                                         ]
                                         : null, onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    }, disabled: itemSec.disabled, showTime: itemSec.showTime, style: { width: '100%' } })) : null)))));
+                                    }, disabled: itemSec.disabled, showTime: itemSec.showTime, style: { width: '100%' } })) : null,
+                                itemSec.type == 'checkbox' ? (React.createElement(Checkbox.Group, { style: { width: '100%', textAlign: "left" }, className: classesForm, value: checkTypeBackArray(itemSec.value), onChange: function (e) {
+                                        changeFun(e, itemSec);
+                                    } }, itemSec.options &&
+                                    itemSec.options.map(function (itemOption, indexOption) {
+                                        return (React.createElement(Checkbox, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.key
+                                                ? "" + itemOption[itemSec.optionsObj.key]
+                                                : "" + itemOption.key, key: itemSec.optionsObj && itemSec.optionsObj.key
+                                                ? itemOption[itemSec.optionsObj.key]
+                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
+                                            ? itemOption[itemSec.optionsObj.value]
+                                            : itemOption.value));
+                                    }))) : null,
+                                itemSec.type == 'radio' ? (React.createElement(Radio.Group, { style: { width: '100%', textAlign: "left" }, className: classesForm, onChange: function (e) {
+                                        changeFun(e, itemSec);
+                                    }, value: itemSec.value }, itemSec.options &&
+                                    itemSec.options.map(function (itemOption, indexOption) {
+                                        return (React.createElement(Radio, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.key
+                                                ? "" + itemOption[itemSec.optionsObj.key]
+                                                : "" + itemOption.key, key: itemSec.optionsObj && itemSec.optionsObj.key
+                                                ? itemOption[itemSec.optionsObj.key]
+                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
+                                            ? itemOption[itemSec.optionsObj.value]
+                                            : itemOption.value));
+                                    }))) : null)))));
             })));
         });
     };

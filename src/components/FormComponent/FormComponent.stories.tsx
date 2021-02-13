@@ -9,7 +9,9 @@ let currentObj = {
   AreaLabel: [],
   Area: '',
   time: '',
-  timeRange: []
+  timeRange: [],
+  checkbox: [],
+  radio: '',
 };
 export interface FormProps {
   Username: string;
@@ -17,6 +19,8 @@ export interface FormProps {
   Area: any;
   time: string;
   timeRange: string[];
+  checkbox: string[];
+  radio: string;
 }
 export type DataSourceType<T = {}> = T & FormProps
 // const [ currentObj, setObj ] = useState({
@@ -44,6 +48,19 @@ let QuickSearchProTypeDic = [
     'value': 'Tom'
   }
 ];
+let QuickSearch = [
+  {
+    key: 'beijing',
+    label: 'beijing',
+    disabled: true,
+    value: '北京'
+  },
+  {
+    key: 'shanghai',
+    label: 'shanghai',
+    value: '上海'
+  }
+];
 let sourceList = [
   [ // 多选
     {
@@ -62,14 +79,7 @@ let sourceList = [
     {
       type: 'select', label: 'AreaLabel',
       mode: 'multiple',
-      options: [
-        {
-          label: '北京'
-        },
-        {
-          label: '上海'
-        }
-      ],
+      options: QuickSearch,
       optionsObj: { key: 'label', value: 'label' },
       value: currentObj.AreaLabel, key: 'AreaLabel'
     },
@@ -79,18 +89,23 @@ let sourceList = [
       onSearch: (e: string) => {
         console.log(e)
       },
-      options: [
-        {
-          key: 'beijing',
-          value: '北京'
-        },
-        {
-          key: 'shanghai',
-          value: '上海'
-        }
-      ],
+      options: QuickSearch,
       value: currentObj.Area, key: 'Area'
     }
+  ],
+  [
+    {
+      type: 'checkbox', label: 'checkbox',
+      options: QuickSearch,
+      optionsObj: { key: 'value', value: 'value' },
+      value: currentObj.checkbox, key: 'checkbox'
+    },
+    {
+      type: 'radio', label: 'radio',
+      options: QuickSearch,
+      optionsObj: { key: 'value', value: 'value' },
+      value: currentObj.radio, key: 'radio'
+    },
   ],
   [
     { type: 'time', label: 'time', value: currentObj.time, key: 'time' },

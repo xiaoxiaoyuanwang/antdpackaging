@@ -1,6 +1,6 @@
 import React from 'react';
 export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
-    /**设置 表单类型 status、statusMultiple、input、time、timeRange、text、select、buttons */
+    /**设置 表单类型 status、statusMultiple、input、time、timeRange、text、select、buttons、checkbox、radio */
     type?: string;
     /**设置 label名称 */
     label?: string;
@@ -12,15 +12,19 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     value?: string;
     /**设置 每行的col className */
     colClassName?: string;
-    /**设置 返回主键值， type为status、statusMultiple时每个item的className*/
-    statusItemClassName?: string;
+    /**设置 form的className*/
+    formClassName?: string;
     /**设置 labelClassName的className*/
     labelClassName?: string;
-    /**设置 type为select时的下拉选项，格式[{key: '中国', value: '中国'}],选择返回key值*/
+    /**设置 type为select、checkbox、radio、status、statusMultiple时的选项，
+     * 格式[{key: '中国', value: '中国'}],选择返回key值
+     * checkbox、radio格式[{key: '中国', value: '中国', disabled: true}]
+     * 禁止某项
+     */
     options?: object[];
     /**设置 Select 的模式为多选或标签 multiple | tags*/
     mode?: 'multiple' | 'tags';
-    /**设置 type为select时的下拉选项显示和返回字段，如果options的格式不是[{key: '中国', value: '中国'}]，
+    /**设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{key: '中国', value: '中国'}]，
      * 可以通过optionsObj实现，如[{label: '中国', value: '中国'}],设置optionsObj:{key:'label',value:'value'}
      * 选择返回label值
     */
