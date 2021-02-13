@@ -5,7 +5,9 @@ npm install antdpackaging --save
 ~~~
 
 ### 使用
-
+<p align="center">
+  <img width="900" src="./src/assets/example.png">
+</p>
 ~~~javascript
 // 加载样式
 import 'antdpackaging/dist/index.css'
