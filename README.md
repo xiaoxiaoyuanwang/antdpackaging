@@ -1,12 +1,14 @@
 ## antd components library
 ## 使用 React+typescript 的组件库
-~~~javascript
-npm install antdpackaging --save
-~~~
 
 <p align="center">
   <img width="900" src="./src/assets/example.png">
 </p>
+
+~~~javascript
+npm install antdpackaging --save
+~~~
+
 ### 使用
 ~~~javascript
 // 加载样式
