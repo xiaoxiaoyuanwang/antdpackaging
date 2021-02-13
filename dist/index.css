@@ -1,0 +1,48 @@
+@import url(antd/dist/antd.css);
+:root {
+  --my-width: 120px; }
+
+.antdpackaging_row {
+  margin: 0 !important;
+  padding: 10px; }
+
+.antdpackaging_col {
+  padding: 0 !important; }
+
+.antdpackaging_label {
+  line-height: 32px;
+  width: var(--my-width);
+  text-align: right; }
+
+.antdpackaging_hint {
+  padding-left: 5px; }
+
+.antdpackaging_status_wrapper {
+  display: flex;
+  border: 1px solid #ddd; }
+
+.antdpackaging_status {
+  width: var(--my-width);
+  padding-right: 15px;
+  text-align: right;
+  border: none;
+  border-right: 1px solid #ddd;
+  background-color: #f5f5f5;
+  padding: 10px; }
+
+.antdpackaging_status_item {
+  margin: 5px; }
+
+.unSelButton {
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  display: inline-block;
+  cursor: pointer; }
+
+.selButton {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #2593fc;
+  cursor: pointer;
+  border: 1px solid #2593fc;
+  display: inline-block; }

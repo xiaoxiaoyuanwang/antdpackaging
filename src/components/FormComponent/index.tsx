@@ -1,2 +1,2 @@
 import FormComponent from './FormComponent'
-export default FormComponent 
+export default FormComponent

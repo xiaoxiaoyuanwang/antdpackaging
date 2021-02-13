@@ -1,5 +1,5 @@
 import React from 'react'
-export interface FormComponentItemProps {
+export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
   /**设置 表单类型 status、statusMultiple、input、time、timeRange、text、select、buttons */
   type?: string;
   /**设置 label名称 */
@@ -19,12 +19,12 @@ export interface FormComponentItemProps {
   /**设置 type为select时的下拉选项，格式[{key: '中国', value: '中国'}],选择返回key值*/
   options?: object[];
   /**设置 Select 的模式为多选或标签 multiple | tags*/
-  mode?: string;
+  mode?: 'multiple' | 'tags';
   /**设置 type为select时的下拉选项显示和返回字段，如果options的格式不是[{key: '中国', value: '中国'}]，
    * 可以通过optionsObj实现，如[{label: '中国', value: '中国'}],设置optionsObj:{key:'label',value:'value'}
    * 选择返回label值
   */
-  optionsObj?: {key:string,value:string};
+  optionsObj?: { key: string, value: string };
   /**设置 type为time、timeRange的时间格式*/
   dateFormat?: string;
   /**设置 placeholder*/
@@ -48,10 +48,10 @@ export interface FormComponentItemProps {
   showTime?: boolean;
   maxLength?: number;
   allowClear?: boolean;
-  disabledDate?: (e: any,opt?:any) => any;
-  disabledTime?: (e: any,opt?:any) => any;
-  onSearch? : (value: string) => void;
-  onChange? : (e: any,opt?:any) => void;
+  disabledDate?: (e: any, opt?: any) => any;
+  disabledTime?: (e: any, opt?: any) => any;
+  onSearch?: (e: string) => void;
+  onChange?: (e: any, opt?: any) => void;
 }
 
 const FormComponentItem: React.FC<FormComponentItemProps> = (props) => {
