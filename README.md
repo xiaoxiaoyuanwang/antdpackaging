@@ -216,7 +216,7 @@ export default App;
         <td class="info-table-monospace"><span>any</span></td>
         <td>-</td>
         <td>-</td>
-        <td>设置 返回主键值， type为text时返回传入值</td>
+        <td>设置 返回主键值， type为text、buttons时返回传入值</td>
       </tr>
       <tr>
         <td class="info-table-monospace">must</td>
