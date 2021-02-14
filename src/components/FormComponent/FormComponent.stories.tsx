@@ -65,13 +65,13 @@ let sourceList = [
   [ // 多选
     {
       type: 'statusMultiple', md: 24, label: '多选', value: '', key: 'names', query: true,
-      options: QuickSearchProTypeDic,
+      options: QuickSearchProTypeDic
     },
   ],
   [ // 单选
     {
       type: 'status', md: 24, label: '单选', value: '', key: 'name', query: true,
-      options: QuickSearchProTypeDic,
+      options: QuickSearchProTypeDic
     },
   ],
   [

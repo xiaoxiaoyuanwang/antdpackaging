@@ -143,7 +143,7 @@ export var FormComponent = function (props) {
                     return (React.createElement(Col, { md: itemSec.md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) }, itemSec.key));
                 }
                 if (itemSec.type === 'status' || itemSec.type === 'statusMultiple') {
-                    return (React.createElement(Col, { md: itemSec.md || 24, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) },
+                    return (React.createElement(Col, { md: itemSec.md || 24, sm: 24, key: indexSec, className: classNames('antdpackaging_status_col', classesCol), style: __assign({}, itemSec.colStyle) },
                         React.createElement("div", { className: 'antdpackaging_status_wrapper', style: __assign({}, itemSec.styleWrapper) },
                             React.createElement("div", { className: classesStatus, style: __assign({}, itemSec.labelStyle) },
                                 itemSec.must ?
@@ -247,7 +247,8 @@ export var FormComponent = function (props) {
             })));
         });
     };
-    return (React.createElement(ConfigProvider, { locale: zhCN }, initHtml(sourceList)));
+    return (React.createElement(ConfigProvider, { locale: zhCN },
+        React.createElement("div", { className: "form_components" }, initHtml(sourceList))));
 };
 FormComponent.defaultProps = {
     size: 'middle'

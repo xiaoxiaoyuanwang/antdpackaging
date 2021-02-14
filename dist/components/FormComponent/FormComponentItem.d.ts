@@ -4,7 +4,7 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     type?: string;
     /**设置 label名称 */
     label?: string;
-    /**设置 返回主键值， type为text时返回传入值*/
+    /**设置 返回主键值， type为text、buttons时返回传入值*/
     key?: any;
     /**设置 是否必填*/
     must?: boolean;

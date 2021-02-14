@@ -169,7 +169,7 @@ export default App;
         <td class="info-table-monospace"><span>string</span></td>
         <td>-</td>
         <td>-</td>
-        <td>设置 每行的className</td>
+        <td>设置 容器的className</td>
       </tr>
       <tr>
         <td class="info-table-monospace">style</td>

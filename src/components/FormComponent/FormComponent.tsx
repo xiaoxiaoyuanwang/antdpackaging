@@ -28,7 +28,7 @@ export type DataSourceType<T = {}> = T & FormComponentItemProps
 export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'type'> {
   /**设置 数据源 */
   sourceList: object[],
-  /**设置 每行的className */
+  /**设置 容器的className */
   className?: string;
   /**设置 每行的style */
   style?: React.CSSProperties;
@@ -136,7 +136,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
     if (!data) {
       return;
     }
-    const classesRow = classNames('antdpackaging_row', className)
+    const classesRow = classNames('antdpackaging_row')
     return data.map((itemOne: any, indexOne: number) => {
       return (
         <Row key={indexOne} className={classesRow}>
@@ -170,7 +170,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                   md={itemSec.md || 24}
                   sm={24}
                   key={indexSec}
-                  className={classesCol}
+                  className={classNames('antdpackaging_status_col',classesCol)}
                   style={{
                     ...itemSec.colStyle
                   }}
@@ -463,9 +463,12 @@ export const FormComponent: FC<BaseProps> = (props) => {
       );
     });
   }
+  const classes = classNames('form_components', className)
   return (
     <ConfigProvider locale={zhCN}>
-      {initHtml(sourceList)}
+      <div className={classes}>
+        {initHtml(sourceList)}
+      </div>
     </ConfigProvider>
   )
 }
