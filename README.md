@@ -145,7 +145,33 @@ function App() {
 export default App;
 
 ~~~
-
+<table class="info-table">
+    <thead>
+      <tr>
+        <th>property</th>
+        <th>propType</th>
+        <th>required</th>
+        <th>default</th>
+        <th>description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="info-table-monospace">sourceList</td>
+        <td class="info-table-monospace"><span>object[]</span></td>
+        <td>yes</td>
+        <td>-</td>
+        <td>设置 数据源</td>
+      </tr>
+      <tr>
+        <td class="info-table-monospace">className</td>
+        <td class="info-table-monospace"><span>string</span></td>
+        <td>-</td>
+        <td>-</td>
+        <td>设置 每行的className</td>
+      </tr>
+    </tbody>
+  </table>
 ~~~bash
 //启动本地环境
 npm run stroybook
