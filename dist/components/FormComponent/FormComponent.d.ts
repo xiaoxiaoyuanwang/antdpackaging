@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { FormComponentItemProps } from './FormComponentItem';
 import 'moment/locale/zh-cn';
+import { FormComponentItemProps } from './FormComponentItem';
 export declare type SizeType = 'small' | 'middle' | 'large' | undefined;
 export declare type DataSourceType<T = {}> = T & FormComponentItemProps;
 export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'type'> {

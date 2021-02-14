@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from 'antd'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
@@ -138,11 +138,14 @@ const callBcak = (dt: any, item: any) => {
 }
 const defaultFormComponent = () => (
   <>
-    <FormComponent callBcak={(dt, item) => {
-      callBcak(dt, item)
-      action('clicked')
+    <FormComponent
+    callBcak={(dt, item) => {
+        callBcak(dt, item)
+        action('clicked')
+      }
     }
-    } sourceList={sourceList} />
+    sourceList={sourceList}
+    />
     <FormComponentItem />
   </>
 )

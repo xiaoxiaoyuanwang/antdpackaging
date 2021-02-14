@@ -2,10 +2,10 @@ import moment from 'moment';
 // 判断数据为字符串还是数字，并转换成数组
 export function checkTypeBackArray(value:any,type?:string) {
   if (value) {
-    if (typeof(value) == 'string' || typeof(value) == 'number') {
+    if (typeof(value) === 'string' || typeof(value) === 'number') {
       let bcValue = value.toString().split(type||',');
       return bcValue;
-    } else if(Object.prototype.toString.call(value) == '[object Array]'){
+    } else if(Object.prototype.toString.call(value) === '[object Array]'){
       return value;
     }
   } else {
@@ -15,9 +15,9 @@ export function checkTypeBackArray(value:any,type?:string) {
 // 判断数据为数组，并转换成字符串
 export function checkTypeBackString(value:any,type?:string) {
   if (value) {
-    if (typeof(value) == 'string' || typeof(value) == 'number') {
+    if (typeof(value) === 'string' || typeof(value) === 'number') {
       return value;
-    } else if(Object.prototype.toString.call(value) == '[object Array]'){
+    } else if(Object.prototype.toString.call(value) === '[object Array]'){
       let bcValue = value.join(type||',');
       return bcValue;
     }
@@ -29,13 +29,13 @@ export function checkTypeBackString(value:any,type?:string) {
 export function disabledStartDt(e:any, startDt?:any, endDt?:any, disBeforeToday?:any, dtFormatType?:any){
   let dtFormat = dtFormatType||'YYYY-MM-DD';
   e = moment(e).format(dtFormat)
-  if (e && typeof(e) == 'string') {
+  if (e && typeof(e) === 'string') {
     e = moment(e, dtFormat)
   }
-  if (startDt && typeof(startDt) == 'string') {
+  if (startDt && typeof(startDt) === 'string') {
     startDt = moment(startDt, dtFormat)
   }
-  if (endDt && typeof(endDt) == 'string') {
+  if (endDt && typeof(endDt) === 'string') {
     endDt = moment(endDt, dtFormat)
   }
   if (e && endDt) {
@@ -52,13 +52,13 @@ export function disabledStartDt(e:any, startDt?:any, endDt?:any, disBeforeToday?
 export function disabledEndDt(e:any, startDt?:any, endDt?:any, disBeforeToday?:any, dtFormatType?:any){
   let dtFormat = dtFormatType||'YYYY-MM-DD';
   e = moment(e).format(dtFormat)
-  if (e && typeof(e) == 'string') {
+  if (e && typeof(e) === 'string') {
     e = moment(e, dtFormat)
   }
-  if (startDt && typeof(startDt) == 'string') {
+  if (startDt && typeof(startDt) === 'string') {
     startDt = moment(startDt, dtFormat)
   }
-  if (endDt && typeof(endDt) == 'string') {
+  if (endDt && typeof(endDt) === 'string') {
     endDt = moment(endDt, dtFormat)
   }
   if (e && startDt && endDt) {

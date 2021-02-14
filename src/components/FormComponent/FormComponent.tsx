@@ -13,13 +13,13 @@ import {
 import {
   QuestionCircleOutlined
 } from '@ant-design/icons';
+import classNames from 'classnames'
 import moment from 'moment'
 import zhCN from 'antd/lib/locale/zh_CN';
-import { checkTypeBackArray, checkTypeBackString } from '../../utils/commonUtils'
-import { FormComponentItemProps } from './FormComponentItem'
 import 'moment/locale/zh-cn';
+import { checkTypeBackArray, checkTypeBackString } from '../../utils/utils'
+import { FormComponentItemProps } from './FormComponentItem'
 moment.locale('zh-cn');
-import classNames from 'classnames'
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD'
 
@@ -51,6 +51,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
     style,
     sourceList,
     children,
+    size,
     callBcak,
     ...restProps
   } = props
@@ -66,16 +67,16 @@ export const FormComponent: FC<BaseProps> = (props) => {
   }, [currentObj]);
   function changeFun(e: any, obj: DataSourceType, opt?: any) {
     let val: any;
-    if (obj.type == 'time') {
-      val = moment(e).format(obj.dateFormat || dateFormat) == 'Invalid date' ? '' : moment(e).format(obj.dateFormat || dateFormat);
-    } else if (obj.type == 'timeRange') {
+    if (obj.type === 'time') {
+      val = moment(e).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(e).format(obj.dateFormat || dateFormat);
+    } else if (obj.type === 'timeRange') {
       try {
         if (e && e.length > 0) {
           let arg0 = e[0];
           let arg1 = e[1];
           val = [
-            moment(arg0).format(obj.dateFormat || dateFormat) == 'Invalid date' ? '' : moment(arg0).format(obj.dateFormat || dateFormat),
-            moment(arg1).format(obj.dateFormat || dateFormat) == 'Invalid date' ? '' : moment(arg1).format(obj.dateFormat || dateFormat),
+            moment(arg0).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(arg0).format(obj.dateFormat || dateFormat),
+            moment(arg1).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(arg1).format(obj.dateFormat || dateFormat),
           ];
         } else {
           val = [];
@@ -96,16 +97,16 @@ export const FormComponent: FC<BaseProps> = (props) => {
   function styleStatus(value: string | number, obj: DataSourceType) {
     let obj2 = JSON.parse(JSON.stringify(currentObj))
 
-    if (obj.type == 'statusMultiple') {
-      let oldMultiple = JSON.parse(JSON.stringify(currentObj[obj.key]));
+    if (obj.type === 'statusMultiple') {
+      let oldMultiple = currentObj[obj.key] ? JSON.parse(JSON.stringify(currentObj[obj.key])) : '';
       if (!value) {
         oldMultiple = [];
       } else {
         oldMultiple = checkTypeBackArray(oldMultiple);
-        oldMultiple = oldMultiple.filter((item: string | number) => item != -1);
+        oldMultiple = oldMultiple.filter((item: string | number) => item !== -1);
       }
       if (oldMultiple.indexOf(value) > -1) {
-        oldMultiple = oldMultiple.filter((item: string | number) => item != value);
+        oldMultiple = oldMultiple.filter((item: string | number) => item !== value);
       } else {
         oldMultiple.push(value);
       }
@@ -122,9 +123,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
       return;
     }
     let obj = JSON.parse(JSON.stringify(currentObj))
-    data.map((itemOne: any) => {
-      itemOne.map((itemSec: DataSourceType) => {
-        if (itemSec.type != 'text' && itemSec.type != 'buttons') {
+    data.forEach((itemOne: any) => {
+      itemOne.forEach((itemSec: DataSourceType) => {
+        if (itemSec.type !== 'text' && itemSec.type !== 'buttons') {
           obj[itemSec.key] = itemSec.value
         }
       });
@@ -141,10 +142,14 @@ export const FormComponent: FC<BaseProps> = (props) => {
         <Row key={indexOne} className={classesRow}>
           {itemOne.map((itemSec: DataSourceType, indexSec: number) => {
             const classesCol = classNames('antdpackaging_col', itemSec.colClassName)
-            const classesLabel = classNames('antdpackaging_label', itemSec.labelClassName)
-            const classesStatus = classNames('antdpackaging_status', itemSec.labelClassName)
+            const classesLabel = classNames('antdpackaging_label', itemSec.labelClassName, {
+              [`antdpackaging_size_${size}`]: size
+            })
+            const classesStatus = classNames('antdpackaging_status', itemSec.labelClassName, {
+              [`antdpackaging_status_${size}`]: size
+            })
             const classesForm = classNames(itemSec.formClassName)
-            if (itemSec.type == 'buttons') {
+            if (itemSec.type === 'buttons') {
               return (
                 <Col
                   md={itemSec.md || 8}
@@ -159,7 +164,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                 </Col>
               );
             }
-            if (itemSec.type == 'status' || itemSec.type == 'statusMultiple') {
+            if (itemSec.type === 'status' || itemSec.type === 'statusMultiple') {
               return (
                 <Col
                   md={itemSec.md || 24}
@@ -191,16 +196,17 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       {itemSec.options &&
                         itemSec.options.map((itemOption: any, indexOption: number) => {
                           const keyres = itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? itemOption[itemSec.optionsObj.key]
-                                      : itemOption.key
+                            ? itemOption[itemSec.optionsObj.key]
+                            : itemOption.key
                           const valres = itemSec.optionsObj && itemSec.optionsObj.value
-                                      ? itemOption[itemSec.optionsObj.value]
-                                      : itemOption.value
+                            ? itemOption[itemSec.optionsObj.value]
+                            : itemOption.value
                           const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
+                            [`antdpackaging_status_item_${size}`]: size,
                             "selButton": checkTypeBackArray(currentObj[itemSec.key]).indexOf(
                               (keyres).toString()
                             ) > -1 ||
-                              (checkTypeBackArray(currentObj[itemSec.key]).length == 0 && keyres == '')
+                              (checkTypeBackArray(currentObj[itemSec.key]).length === 0 && keyres === '')
 
                           })
                           return (
@@ -252,11 +258,11 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ：
                     </div>
                     <div className="antdpackaging_form_wrapper">
-                      {itemSec.type == 'text' ? itemSec.key : null}
-                      {itemSec.type == 'input' ? (
+                      {itemSec.type === 'text' ? itemSec.key : null}
+                      {itemSec.type === 'input' ? (
                         <Input
                           className={classesForm}
-                          size={restProps.size}
+                          size={size}
                           allowClear={itemSec.allowClear}
                           maxLength={itemSec.maxLength}
                           disabled={itemSec.disabled}
@@ -267,10 +273,10 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           }}
                         />
                       ) : null}
-                      {itemSec.type == 'select' && !itemSec.showSearch ? (
+                      {itemSec.type === 'select' && !itemSec.showSearch ? (
                         <Select
                           className={classesForm}
-                          size={restProps.size}
+                          size={size}
                           mode={itemSec.mode}
                           allowClear={itemSec.allowClear}
                           getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -305,10 +311,10 @@ export const FormComponent: FC<BaseProps> = (props) => {
                             })}
                         </Select>
                       ) : null}
-                      {itemSec.type == 'select' && itemSec.showSearch ? (
+                      {itemSec.type === 'select' && itemSec.showSearch ? (
                         <Select
                           className={classesForm}
-                          size={restProps.size}
+                          size={size}
                           mode={itemSec.mode}
                           allowClear={itemSec.allowClear}
                           getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -345,10 +351,10 @@ export const FormComponent: FC<BaseProps> = (props) => {
                             })}
                         </Select>
                       ) : null}
-                      {itemSec.type == 'time' ? (
+                      {itemSec.type === 'time' ? (
                         <DatePicker
                           className={classesForm}
-                          size={restProps.size}
+                          size={size}
                           disabledDate={(e) => { return itemSec.disabledDate ? itemSec.disabledDate(e) : null }}
                           value={itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined}
                           onChange={e => {
@@ -359,7 +365,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           placeholder="请选择日期"
                         />
                       ) : null}
-                      {itemSec.type == 'timeRange' ? (
+                      {itemSec.type === 'timeRange' ? (
                         <RangePicker
                           className={classesForm}
                           disabledDate={(e) => { return itemSec.disabledDate ? itemSec.disabledDate(e) : null }}
@@ -381,7 +387,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                         // placeholder="请选择日期"
                         />
                       ) : null}
-                      {itemSec.type == 'checkbox' ? (
+                      {itemSec.type === 'checkbox' ? (
                         <Checkbox.Group
                           style={{ width: '100%', textAlign: "left" }}
                           className={classesForm}
@@ -414,15 +420,15 @@ export const FormComponent: FC<BaseProps> = (props) => {
                             })}
                         </Checkbox.Group>
                       ) : null}
-                      {itemSec.type == 'radio' ? (
-                        <Radio.Group 
+                      {itemSec.type === 'radio' ? (
+                        <Radio.Group
                           style={{ width: '100%', textAlign: "left" }}
                           className={classesForm}
                           onChange={e => {
                             changeFun(e, itemSec);
                           }}
                           value={itemSec.value}
-                         >
+                        >
                           {itemSec.options &&
                             itemSec.options.map((itemOption: any, indexOption: number) => {
                               return (

@@ -22,12 +22,16 @@
   "files": [
     "dist"
   ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
   "scripts": {
     "start": "react-scripts start",
-    "clear": "rimraf ./dist",
+    "clean": "rimraf ./dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build": "npm run clear && npm run build-ts && npm run build-css",
+    "build": "npm run clean && npm run build-ts && npm run build-css",
     "build-link": "npm run build-ts && npm run build-css",
     "build-ts": "tsc -p tsconfig.build.json",
     "storybook": "start-storybook -p 9001 -c .storybook",
