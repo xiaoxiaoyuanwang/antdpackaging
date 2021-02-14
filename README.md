@@ -111,10 +111,14 @@ function App() {
   ]
 
   const query = (dt, item) => {
-    if (dt&&item&&item.query) {
-      console.log('dt',dt)
+    if (dt) {
+      // 点击后立即查询
+      if (item&&item.query) {
+        console.log('点击后立即查询',dt)
+      }
     } else {
-      console.log('currentObj',currentObj)
+      // 点击查询按钮后查询
+      console.log('点击查询按钮后查询',currentObj)
     }
   }
   // useEffect(() => {
