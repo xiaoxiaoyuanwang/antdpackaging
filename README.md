@@ -137,11 +137,11 @@ export default App;
   <table class="info-table" style="width: 100%;">
     <thead>
       <tr>
-        <th width="10%">property</th>
-        <th width="10%">propType</th>
-        <th width="5%">required</th>
-        <th width="5%">default</th>
-        <th width="70%">description</th>
+        <th width="10%" style="max-width: 10%;min-width: 10%;">property</th>
+        <th width="10%" style="max-width: 10%;min-width: 10%;">propType</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">required</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">default</th>
+        <th width="70%" style="max-width: 70%;min-width: 70%;">description</th>
       </tr>
     </thead>
     <tbody>
@@ -189,11 +189,11 @@ export default App;
   <table class="info-table" style="width: 100%;">
     <thead>
       <tr>
-        <th width="10%">property</th>
-        <th width="10%">propType</th>
-        <th width="5%">required</th>
-        <th width="5%">default</th>
-        <th width="70%">description</th>
+        <th width="10%" style="max-width: 10%;min-width: 10%;">property</th>
+        <th width="10%" style="max-width: 10%;min-width: 10%;">propType</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">required</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">default</th>
+        <th width="70%" style="max-width: 70%;min-width: 70%;">description</th>
       </tr>
     </thead>
     <tbody>
