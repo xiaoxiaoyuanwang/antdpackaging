@@ -176,7 +176,7 @@ export default App;
       </tr>
       <tr>
         <td class="info-table-monospace">size</td>
-        <td class="info-table-monospace"><span>SizeType</span></td>
+        <td class="info-table-monospace"><span>'small' | 'middle' | 'large'</span></td>
         <td>-</td>
         <td><span>middle</span></td>
         <td>设置 每一行表单的大小 'small' | 'middle' | 'large'</td>
@@ -420,7 +420,12 @@ npm link
 // 本地项目
 npm link antdpackaging
 
-// 相对路径
+// 当本地react版本不一样时，引入相对路径
 npm link ../antdpackaging/node_modules/react
+
+// 先安装node_modules,然后在package.json中引入一个版本
+"dependencies": {
+  "antdpackaging": "0.1.2"
+},
 
 ~~~
