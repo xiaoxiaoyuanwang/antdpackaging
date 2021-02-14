@@ -127,7 +127,7 @@ export var FormComponent = function (props) {
         if (!data) {
             return;
         }
-        var classesRow = classNames('antdpackaging_row', className);
+        var classesRow = classNames('antdpackaging_row');
         return data.map(function (itemOne, indexOne) {
             return (React.createElement(Row, { key: indexOne, className: classesRow }, itemOne.map(function (itemSec, indexSec) {
                 var _a, _b;
@@ -247,8 +247,9 @@ export var FormComponent = function (props) {
             })));
         });
     };
+    var classes = classNames('form_components', className);
     return (React.createElement(ConfigProvider, { locale: zhCN },
-        React.createElement("div", { className: "form_components" }, initHtml(sourceList))));
+        React.createElement("div", { className: classes }, initHtml(sourceList))));
 };
 FormComponent.defaultProps = {
     size: 'middle'

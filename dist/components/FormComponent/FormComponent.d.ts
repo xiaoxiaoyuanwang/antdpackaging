@@ -6,7 +6,7 @@ export declare type DataSourceType<T = {}> = T & FormComponentItemProps;
 export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'type'> {
     /**设置 数据源 */
     sourceList: object[];
-    /**设置 每行的className */
+    /**设置 容器的className */
     className?: string;
     /**设置 每行的style */
     style?: React.CSSProperties;
