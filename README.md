@@ -9,11 +9,14 @@ npm install antdpackaging --save
 ~~~javascript
 // 加载样式
 import 'antdpackaging/dist/index.css'
+
 // 引入组件
 import { FormComponent } from 'antdpackaging'
+
 // 代码示例
 function App() {
   const [currentObj, setObj] = useState({checkbox: "上海"});
+  // const [currentItem, setItem] = useState({});
   let QuickSearchProTypeDic = [
     {
       'key': '',
@@ -107,17 +110,26 @@ function App() {
     ]
   ]
 
-  const query = () => (
-    console.log(currentObj)
-  )
-  useEffect(() => {
-  }, [currentObj]);
-  const callBcak = (dt, item) => {
-    setObj(dt)
-    if (item && item.query) {
-      query()
+  const query = (dt, item) => {
+    if (dt) {
+      // 点击后立即查询
+      if (item&&item.query) {
+        console.log('点击后立即查询',dt)
+      }
+    } else {
+      // 点击查询按钮后查询
+      console.log('点击查询按钮后查询',currentObj)
     }
-
+  }
+  // useEffect(() => {
+  //   if (currentItem && currentItem.query) {
+  //     query()
+  //   }
+  // }, [currentObj]);
+  const callBcak = (dt, item) => {
+    // setItem(item)
+    setObj(dt)
+    query(dt, item)
   }
   return (
     <div className="App">
