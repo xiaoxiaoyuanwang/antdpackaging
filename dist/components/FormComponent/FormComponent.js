@@ -46,11 +46,17 @@ export var FormComponent = function (props) {
     useEffect(function () {
         init(sourceList);
     }, []);
-    useEffect(function () {
+    // useEffect(() => {
+    //   if (callBcak) {
+    //     callBcak(currentObj, currentDt);
+    //   }
+    // }, [currentObj]);
+    // 回调函数
+    function back(obj, item) {
         if (callBcak) {
-            callBcak(currentObj, currentDt);
+            callBcak(obj, item);
         }
-    }, [currentObj]);
+    }
     function changeFun(e, obj, opt) {
         var val;
         if (obj.type === 'time') {
@@ -77,14 +83,14 @@ export var FormComponent = function (props) {
         else {
             val = e && e.target ? e.target.value : e;
         }
-        var obj2 = JSON.parse(JSON.stringify(currentObj));
-        obj2[obj.key] = val;
-        setDt(obj);
-        setObj(obj2);
+        var currentObjNew = JSON.parse(JSON.stringify(currentObj));
+        currentObjNew[obj.key] = val;
+        back(currentObjNew, obj);
+        setObj(currentObjNew);
     }
     // 单选或多选选中
     function styleStatus(value, obj) {
-        var obj2 = JSON.parse(JSON.stringify(currentObj));
+        var currentObjNew = JSON.parse(JSON.stringify(currentObj));
         if (obj.type === 'statusMultiple') {
             var oldMultiple = currentObj[obj.key] ? JSON.parse(JSON.stringify(currentObj[obj.key])) : '';
             if (!value) {
@@ -100,13 +106,13 @@ export var FormComponent = function (props) {
             else {
                 oldMultiple.push(value);
             }
-            obj2[obj.key] = checkTypeBackString(oldMultiple);
+            currentObjNew[obj.key] = checkTypeBackString(oldMultiple);
         }
         else {
-            obj2[obj.key] = value;
+            currentObjNew[obj.key] = value;
         }
-        setDt(obj);
-        setObj(obj2);
+        back(currentObjNew, obj);
+        setObj(currentObjNew);
     }
     // 初始化渲染
     function init(data) {

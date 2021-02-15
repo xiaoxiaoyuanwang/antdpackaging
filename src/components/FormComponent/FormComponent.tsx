@@ -60,11 +60,17 @@ export const FormComponent: FC<BaseProps> = (props) => {
   useEffect(() => {
     init(sourceList);
   }, []);
-  useEffect(() => {
+  // useEffect(() => {
+  //   if (callBcak) {
+  //     callBcak(currentObj, currentDt);
+  //   }
+  // }, [currentObj]);
+  // 回调函数
+  function back(obj: object,item: DataSourceType) {
     if (callBcak) {
-      callBcak(currentObj, currentDt);
+      callBcak(obj, item);
     }
-  }, [currentObj]);
+  }
   function changeFun(e: any, obj: DataSourceType, opt?: any) {
     let val: any;
     if (obj.type === 'time') {
@@ -82,20 +88,20 @@ export const FormComponent: FC<BaseProps> = (props) => {
           val = [];
         }
       } catch (error) {
-        val = [];
+        val = []
       }
     } else {
       val = e && e.target ? e.target.value : e;
     }
-    let obj2 = JSON.parse(JSON.stringify(currentObj))
-    obj2[obj.key] = val
-    setDt(obj);
-    setObj(obj2);
+    let currentObjNew = JSON.parse(JSON.stringify(currentObj))
+    currentObjNew[obj.key] = val
+    back(currentObjNew, obj)
+    setObj(currentObjNew)
 
   }
   // 单选或多选选中
   function styleStatus(value: string | number, obj: DataSourceType) {
-    let obj2 = JSON.parse(JSON.stringify(currentObj))
+    let currentObjNew = JSON.parse(JSON.stringify(currentObj))
 
     if (obj.type === 'statusMultiple') {
       let oldMultiple = currentObj[obj.key] ? JSON.parse(JSON.stringify(currentObj[obj.key])) : '';
@@ -110,12 +116,12 @@ export const FormComponent: FC<BaseProps> = (props) => {
       } else {
         oldMultiple.push(value);
       }
-      obj2[obj.key] = checkTypeBackString(oldMultiple)
+      currentObjNew[obj.key] = checkTypeBackString(oldMultiple)
     } else {
-      obj2[obj.key] = value
+      currentObjNew[obj.key] = value
     }
-    setDt(obj);
-    setObj(obj2);
+    back(currentObjNew, obj)
+    setObj(currentObjNew);
   }
   // 初始化渲染
   function init(data: object[]) {
