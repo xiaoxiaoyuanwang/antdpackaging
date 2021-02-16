@@ -3,6 +3,12 @@
 ## 对于antd表单的二次封装，便于项目中方便使用，减少代码书写
 ## 使用 React+typescript 的组件库
 
+~~~bash
+//启动本地环境
+npm run stroybook
+
+~~~
+
 <p align="center">
   <img width="900" src="./src/assets/example.png">
 </p>
