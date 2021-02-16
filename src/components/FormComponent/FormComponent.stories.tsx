@@ -6,7 +6,7 @@ import FormComponent from './FormComponent'
 import FormComponentItem, { FormComponentItemProps } from './FormComponentItem'
 export interface FormProps {
   name: string;
-  names: string;
+  names: string[];
   Username: string;
   AreaLabel: string[];
   Area: any;
@@ -18,58 +18,58 @@ export interface FormProps {
 export type DataSourceType<T = {}> = T & FormProps
 const defaultFormComponent = () => {
   const [ currentObj, setObj ] = useState<DataSourceType>({
-    name: 'Jack',
-    names: 'Jack,Lucy',
+    name: '',
+    names: ['Jack-value', 'Lucy-value'],
     Username: '',
-    AreaLabel: [],
+    AreaLabel: ['shanghai'],
     Area: '',
     time: '',
     timeRange: [],
-    checkbox: ['上海', '北京'],
+    checkbox: ['beijing', 'shanghai'],
     radio: '北京',
   });
-  let QuickSearchProTypeDic = [
+  let QuickSearchTypeDic = [
     {
-      'key': '',
-      'value': '所有'
+      'value': '',
+      'label': '所有'
     },
     {
-      'key': 'Jack',
-      'value': 'Jack'
+      'value': 'Jack-value',
+      'label': 'Jack'
     },
     {
-      'key': 'Lucy',
-      'value': 'Lucy'
+      'value': 'Lucy-value',
+      'label': 'Lucy'
     },
     {
-      'key': 'Tom',
-      'value': 'Tom'
+      'value': 'Tom-value',
+      'label': 'Tom'
     }
   ];
   let QuickSearch = [
     {
       key: 'beijing',
-      label: 'beijing',
       disabled: true,
-      value: '北京'
+      value: '北京',
+      label: '北京'
     },
     {
       key: 'shanghai',
-      label: 'shanghai',
-      value: '上海'
+      value: '上海',
+      label: '上海'
     }
   ];
   let sourceList = [
     [ // 多选
       {
         type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, key: 'names', query: true,
-        options: QuickSearchProTypeDic
+        options: QuickSearchTypeDic,
       },
     ],
     [ // 单选
       {
         type: 'status', md: 24, label: '单选', value: currentObj.name, key: 'name', query: true,
-        options: QuickSearchProTypeDic
+        options: QuickSearchTypeDic
       },
     ],
     [
@@ -78,7 +78,7 @@ const defaultFormComponent = () => {
         type: 'select', label: 'AreaLabel',
         mode: 'multiple',
         options: QuickSearch,
-        optionsObj: { key: 'label', value: 'label' },
+        optionsObj: { label: 'label', value: 'key' },
         value: currentObj.AreaLabel, key: 'AreaLabel'
       },
       {
@@ -92,23 +92,22 @@ const defaultFormComponent = () => {
       }
     ],
     [
+      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
+      {
+        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
+      }
+    ],
+    [
       {
         type: 'checkbox', label: 'checkbox',
         options: QuickSearch,
-        optionsObj: { key: 'value', value: 'value' },
+        optionsObj: { label: 'value', value: 'key' },
         value: currentObj.checkbox, key: 'checkbox'
       },
       {
         type: 'radio', label: 'radio',
         options: QuickSearch,
-        optionsObj: { key: 'value', value: 'value' },
         value: currentObj.radio, key: 'radio'
-      },
-    ],
-    [
-      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
-      {
-        type: 'timeRange', label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
       },
       {
         type: 'buttons',
@@ -118,7 +117,7 @@ const defaultFormComponent = () => {
             action('callBcak')
           }
           }>
-            查询
+            获取数据
           </Button>
         </div>
       }
@@ -126,13 +125,13 @@ const defaultFormComponent = () => {
   ]
   const query = (dt?:any, item?:FormComponentItemProps) => {
     if (dt) {
-      // 点击后立即查询
+      // 点击后立即获取数据
       if (item&&item.query) {
-        console.log('点击后立即查询',dt)
+        console.log('点击后立即获取数据',dt)
       }
     } else {
-      // 点击查询按钮后查询
-      console.log('点击查询按钮后查询',currentObj)
+      // 点击获取数据按钮后获取数据
+      console.log('点击按钮后获取数据',currentObj)
     }
   }
   const callBcak = (dt: any, item?: FormComponentItemProps) => {

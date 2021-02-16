@@ -17,7 +17,7 @@ import classNames from 'classnames'
 import moment from 'moment'
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
-import { checkTypeBackArray, checkTypeBackString } from '../../utils/utils'
+import { checkTypeBackArray } from '../../utils/utils'
 import { FormComponentItemProps } from './FormComponentItem'
 moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
@@ -34,8 +34,8 @@ export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   style?: React.CSSProperties;
   /**设置 回调函数,参数一为当前表单的数据,参数二为当前行的传入数据 */
   callBcak?: (backData: any, item?: DataSourceType) => void;
-  /**设置 每一行表单的大小 'small' | 'middle' | 'large' */
-  size?: SizeType;
+  /**设置 每一行表单的大小 */
+  size?: 'small' | 'middle' | 'large' | undefined;
 }
 /**
  * 页面中最常用的的元素，适合于完成特定的交互
@@ -116,7 +116,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
       } else {
         oldMultiple.push(value);
       }
-      currentObjNew[obj.key] = checkTypeBackString(oldMultiple)
+      currentObjNew[obj.key] = checkTypeBackArray(oldMultiple)
     } else {
       currentObjNew[obj.key] = value
     }
@@ -201,12 +201,12 @@ export const FormComponent: FC<BaseProps> = (props) => {
                     <div style={{ flex: 1, textAlign: 'left' }}>
                       {itemSec.options &&
                         itemSec.options.map((itemOption: any, indexOption: number) => {
-                          const keyres = itemSec.optionsObj && itemSec.optionsObj.key
-                            ? itemOption[itemSec.optionsObj.key]
-                            : itemOption.key
-                          const valres = itemSec.optionsObj && itemSec.optionsObj.value
+                          const keyres = itemSec.optionsObj && itemSec.optionsObj.value
                             ? itemOption[itemSec.optionsObj.value]
                             : itemOption.value
+                          const valres = itemSec.optionsObj && itemSec.optionsObj.label
+                            ? itemOption[itemSec.optionsObj.label]
+                            : itemOption.label
                           const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
                             [`antdpackaging_status_item_${size}`]: size,
                             "selButton": checkTypeBackArray(currentObj[itemSec.key]).indexOf(
@@ -299,19 +299,19 @@ export const FormComponent: FC<BaseProps> = (props) => {
                                 <Select.Option
                                   items={itemOption}
                                   value={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? `${itemOption[itemSec.optionsObj.key]},${itemOption[itemSec.optionsObj.value]}`
-                                      : `${itemOption.key},${itemOption.value}`
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? `${itemOption[itemSec.optionsObj.value]}`
+                                      : `${itemOption.value}`
                                   }
                                   key={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? itemOption[itemSec.optionsObj.key]
-                                      : itemOption.key
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? itemOption[itemSec.optionsObj.value]
+                                      : itemOption.value
                                   }
                                 >
-                                  {itemSec.optionsObj && itemSec.optionsObj.value
-                                    ? itemOption[itemSec.optionsObj.value]
-                                    : itemOption.value}
+                                  {itemSec.optionsObj && itemSec.optionsObj.label
+                                    ? itemOption[itemSec.optionsObj.label]
+                                    : itemOption.label}
                                 </Select.Option>
                               );
                             })}
@@ -339,19 +339,19 @@ export const FormComponent: FC<BaseProps> = (props) => {
                                 <Select.Option
                                   items={itemOption}
                                   value={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? `${itemOption[itemSec.optionsObj.key]},${itemOption[itemSec.optionsObj.value]}`
-                                      : `${itemOption.key},${itemOption.value}`
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? `${itemOption[itemSec.optionsObj.value]}`
+                                      : `${itemOption.value}`
                                   }
                                   key={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? itemOption[itemSec.optionsObj.key]
-                                      : itemOption.key
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? itemOption[itemSec.optionsObj.value]
+                                      : itemOption.value
                                   }
                                 >
-                                  {itemSec.optionsObj && itemSec.optionsObj.value
-                                    ? itemOption[itemSec.optionsObj.value]
-                                    : itemOption.value}
+                                  {itemSec.optionsObj && itemSec.optionsObj.label
+                                    ? itemOption[itemSec.optionsObj.label]
+                                    : itemOption.label}
                                 </Select.Option>
                               );
                             })}
@@ -408,19 +408,19 @@ export const FormComponent: FC<BaseProps> = (props) => {
                                 <Checkbox
                                   disabled={itemOption.disabled}
                                   value={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? `${itemOption[itemSec.optionsObj.key]}`
-                                      : `${itemOption.key}`
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? `${itemOption[itemSec.optionsObj.value]}`
+                                      : `${itemOption.value}`
                                   }
                                   key={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? itemOption[itemSec.optionsObj.key]
-                                      : itemOption.key
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? itemOption[itemSec.optionsObj.value]
+                                      : itemOption.value
                                   }
                                 >
-                                  {itemSec.optionsObj && itemSec.optionsObj.value
-                                    ? itemOption[itemSec.optionsObj.value]
-                                    : itemOption.value}
+                                  {itemSec.optionsObj && itemSec.optionsObj.label
+                                    ? itemOption[itemSec.optionsObj.label]
+                                    : itemOption.label}
                                 </Checkbox>
                               );
                             })}
@@ -441,19 +441,19 @@ export const FormComponent: FC<BaseProps> = (props) => {
                                 <Radio
                                   disabled={itemOption.disabled}
                                   value={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? `${itemOption[itemSec.optionsObj.key]}`
-                                      : `${itemOption.key}`
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? `${itemOption[itemSec.optionsObj.value]}`
+                                      : `${itemOption.value}`
                                   }
                                   key={
-                                    itemSec.optionsObj && itemSec.optionsObj.key
-                                      ? itemOption[itemSec.optionsObj.key]
-                                      : itemOption.key
+                                    itemSec.optionsObj && itemSec.optionsObj.value
+                                      ? itemOption[itemSec.optionsObj.value]
+                                      : itemOption.value
                                   }
                                 >
-                                  {itemSec.optionsObj && itemSec.optionsObj.value
-                                    ? itemOption[itemSec.optionsObj.value]
-                                    : itemOption.value}
+                                  {itemSec.optionsObj && itemSec.optionsObj.label
+                                    ? itemOption[itemSec.optionsObj.label]
+                                    : itemOption.label}
                                 </Radio>
                               );
                             })}

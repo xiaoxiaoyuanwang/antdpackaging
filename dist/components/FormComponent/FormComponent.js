@@ -27,7 +27,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
-import { checkTypeBackArray, checkTypeBackString } from '../../utils/utils';
+import { checkTypeBackArray } from '../../utils/utils';
 moment.locale('zh-cn');
 var RangePicker = DatePicker.RangePicker;
 var dateFormat = 'YYYY-MM-DD';
@@ -106,7 +106,7 @@ export var FormComponent = function (props) {
             else {
                 oldMultiple.push(value);
             }
-            currentObjNew[obj.key] = checkTypeBackString(oldMultiple);
+            currentObjNew[obj.key] = checkTypeBackArray(oldMultiple);
         }
         else {
             currentObjNew[obj.key] = value;

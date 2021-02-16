@@ -8,7 +8,7 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     key?: any;
     /**设置 是否必填*/
     must?: boolean;
-    /**设置 默认回显值格式statusMultiple: 'value1,value2';timeRange: ['2021-02-12','2021-02-13']*/
+    /**设置 默认回显值格式statusMultiple: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
     value?: string;
     /**设置 每行的col className */
     colClassName?: string;

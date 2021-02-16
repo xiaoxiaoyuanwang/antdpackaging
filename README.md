@@ -1,4 +1,6 @@
 ## antd components library
+
+## 对于antd表单的二次封装，便于项目中方便使用，减少代码书写
 ## 使用 React+typescript 的组件库
 
 <p align="center">
@@ -19,50 +21,59 @@ import { FormComponent } from 'antdpackaging'
 
 // 代码示例
 function App() {
-  const [currentObj, setObj] = useState({checkbox: "上海"});
-  // const [currentItem, setItem] = useState({});
-  let QuickSearchProTypeDic = [
+  const [ currentObj, setObj ] = useState({
+    name: '',
+    names: ['Jack-value', 'Lucy-value'],
+    Username: '',
+    AreaLabel: ['shanghai'],
+    Area: '',
+    time: '',
+    timeRange: [],
+    checkbox: ['beijing', 'shanghai'],
+    radio: '北京',
+  });
+  let QuickSearchTypeDic = [
     {
-      'key': '',
-      'value': '所有'
+      'value': '',
+      'label': '所有'
     },
     {
-      'key': 'Jack',
-      'value': 'Jack'
+      'value': 'Jack-value',
+      'label': 'Jack'
     },
     {
-      'key': 'Lucy',
-      'value': 'Lucy'
+      'value': 'Lucy-value',
+      'label': 'Lucy'
     },
     {
-      'key': 'Tom',
-      'value': 'Tom'
+      'value': 'Tom-value',
+      'label': 'Tom'
     }
   ];
   let QuickSearch = [
     {
       key: 'beijing',
-      label: 'beijing',
       disabled: true,
-      value: '北京'
+      value: '北京',
+      label: '北京'
     },
     {
       key: 'shanghai',
-      label: 'shanghai',
-      value: '上海'
+      value: '上海',
+      label: '上海'
     }
   ];
   let sourceList = [
     [ // 多选
       {
-        type: 'statusMultiple', md: 24, label: '多选', value: '', key: 'names', query: true,
-        options: QuickSearchProTypeDic,
+        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, key: 'names', query: true,
+        options: QuickSearchTypeDic,
       },
     ],
     [ // 单选
       {
-        type: 'status', md: 24, label: '单选', value: '', key: 'name', query: true,
-        options: QuickSearchProTypeDic,
+        type: 'status', md: 24, label: '单选', value: currentObj.name, key: 'name', query: true,
+        options: QuickSearchTypeDic
       },
     ],
     [
@@ -71,44 +82,47 @@ function App() {
         type: 'select', label: 'AreaLabel',
         mode: 'multiple',
         options: QuickSearch,
-        optionsObj: { key: 'label', value: 'label' },
+        optionsObj: { label: 'label', value: 'key' },
         value: currentObj.AreaLabel, key: 'AreaLabel'
       },
       {
         type: 'select', label: 'Area',
         showSearch: true,
+        onSearch: (e: string) => {
+          console.log(e)
+        },
         options: QuickSearch,
         value: currentObj.Area, key: 'Area'
+      }
+    ],
+    [
+      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
+      {
+        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
       }
     ],
     [
       {
         type: 'checkbox', label: 'checkbox',
         options: QuickSearch,
-        optionsObj: { key: 'value', value: 'value' },
+        optionsObj: { label: 'value', value: 'key' },
         value: currentObj.checkbox, key: 'checkbox'
       },
       {
         type: 'radio', label: 'radio',
         options: QuickSearch,
-        optionsObj: { key: 'value', value: 'value' },
         value: currentObj.radio, key: 'radio'
-      },
-    ],
-    [
-      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
-      {
-        type: 'timeRange', label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
       },
       {
         type: 'buttons',
         key: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
           <Button type="primary" onClick={() => {
             query()
+            action('callBcak')
           }
           }>
-            查询
-        </Button>
+            获取数据
+          </Button>
         </div>
       }
     ]
@@ -116,13 +130,13 @@ function App() {
 
   const query = (dt, item) => {
     if (dt) {
-      // 点击后立即查询
+      // 点击后立即获取数据
       if (item&&item.query) {
-        console.log('点击后立即查询',dt)
+        console.log('点击后立即获取数据',dt)
       }
     } else {
-      // 点击查询按钮后查询
-      console.log('点击查询按钮后查询',currentObj)
+      // 点击获取数据按钮后获取数据
+      console.log('点击查询按钮后获取数据',currentObj)
     }
   }
   // useEffect(() => {
@@ -246,7 +260,7 @@ export default App;
         <td class="info-table-monospace"><span>string</span></td>
         <td>-</td>
         <td>-</td>
-        <td>设置 默认回显值格式statusMultiple: 'value1,value2';timeRange: ['2021-02-12','2021-02-13']</td>
+        <td>设置 默认回显值格式statusMultiple: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']</td>
       </tr>
       <tr>
         <td class="info-table-monospace">colClassName</td>
@@ -274,8 +288,8 @@ export default App;
         <td class="info-table-monospace"><span>object[]</span></td>
         <td>-</td>
         <td>-</td>
-        <td><span> 设置 type为select、checkbox、radio、status、statusMultiple时的选项，</span><span><br> 格式[{key: '中国', value:
-            '中国'}],选择返回key值</span><span><br> checkbox、radio格式[{key: '中国', value: '中国', disabled: true}]</span><span><br>
+        <td><span> 设置 type为select、checkbox、radio、status、statusMultiple时的选项，</span><span><br> 格式[{label: '中国', value:
+            '中国'}],选择返回label值</span><span><br> checkbox、radio格式[{label: '中国', value: '中国', disabled: true}]</span><span><br>
             禁止某项</span></td>
       </tr>
       <tr>
@@ -287,12 +301,12 @@ export default App;
       </tr>
       <tr>
         <td class="info-table-monospace">optionsObj</td>
-        <td class="info-table-monospace"><span>{ key: string; value: string; }</span></td>
+        <td class="info-table-monospace"><span>{ label: string; value: string; }</span></td>
         <td>-</td>
         <td>-</td>
-        <td><span> 设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{key: '中国', value:
+        <td><span> 设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{label: '中国', value:
             '中国'}]，</span><span><br> 可以通过optionsObj实现，如[{label: '中国', value:
-            '中国'}],设置optionsObj:{key:'label',value:'value'}</span><span><br> 选择返回label值</span></td>
+            '中国'}],设置optionsObj:{label:'label',value:'key'}</span><span><br> 选择返回key值</span></td>
       </tr>
       <tr>
         <td class="info-table-monospace">dateFormat</td>
