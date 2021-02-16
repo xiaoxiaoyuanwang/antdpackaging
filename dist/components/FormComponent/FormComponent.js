@@ -159,12 +159,12 @@ export var FormComponent = function (props) {
                             React.createElement("div", { style: { flex: 1, textAlign: 'left' } }, itemSec.options &&
                                 itemSec.options.map(function (itemOption, indexOption) {
                                     var _a;
-                                    var keyres = itemSec.optionsObj && itemSec.optionsObj.key
-                                        ? itemOption[itemSec.optionsObj.key]
-                                        : itemOption.key;
-                                    var valres = itemSec.optionsObj && itemSec.optionsObj.value
+                                    var keyres = itemSec.optionsObj && itemSec.optionsObj.value
                                         ? itemOption[itemSec.optionsObj.value]
                                         : itemOption.value;
+                                    var valres = itemSec.optionsObj && itemSec.optionsObj.label
+                                        ? itemOption[itemSec.optionsObj.label]
+                                        : itemOption.label;
                                     var classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, (_a = {},
                                         _a["antdpackaging_status_item_" + size] = size,
                                         _a["selButton"] = checkTypeBackArray(currentObj[itemSec.key]).indexOf((keyres).toString()) > -1 ||
@@ -195,25 +195,25 @@ export var FormComponent = function (props) {
                                         changeFun(e, itemSec, opt);
                                     } }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key] + "," + itemOption[itemSec.optionsObj.value]
-                                                : itemOption.key + "," + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key]
-                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
-                                            ? itemOption[itemSec.optionsObj.value]
-                                            : itemOption.value));
+                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? "" + itemOption[itemSec.optionsObj.value]
+                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? itemOption[itemSec.optionsObj.value]
+                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
+                                            ? itemOption[itemSec.optionsObj.label]
+                                            : itemOption.label));
                                     }))) : null,
                                 itemSec.type === 'select' && itemSec.showSearch ? (React.createElement(Select, { className: classesForm, size: size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', showSearch: itemSec.showSearch ? itemSec.showSearch : undefined, value: itemSec.value, onSearch: function (e) { return (itemSec.showSearch && itemSec.onSearch ? itemSec.onSearch(e) : undefined); }, onChange: function (e, opt) {
                                         changeFun(e, itemSec, opt);
                                     } }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key] + "," + itemOption[itemSec.optionsObj.value]
-                                                : itemOption.key + "," + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key]
-                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
-                                            ? itemOption[itemSec.optionsObj.value]
-                                            : itemOption.value));
+                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? "" + itemOption[itemSec.optionsObj.value]
+                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? itemOption[itemSec.optionsObj.value]
+                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
+                                            ? itemOption[itemSec.optionsObj.label]
+                                            : itemOption.label));
                                     }))) : null,
                                 itemSec.type === 'time' ? (React.createElement(DatePicker, { className: classesForm, size: size, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, value: itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined, onChange: function (e) {
                                         changeFun(e, itemSec);
@@ -230,25 +230,25 @@ export var FormComponent = function (props) {
                                         changeFun(e, itemSec);
                                     } }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Checkbox, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? "" + itemOption[itemSec.optionsObj.key]
-                                                : "" + itemOption.key, key: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key]
-                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
-                                            ? itemOption[itemSec.optionsObj.value]
-                                            : itemOption.value));
+                                        return (React.createElement(Checkbox, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? "" + itemOption[itemSec.optionsObj.value]
+                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? itemOption[itemSec.optionsObj.value]
+                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
+                                            ? itemOption[itemSec.optionsObj.label]
+                                            : itemOption.label));
                                     }))) : null,
                                 itemSec.type === 'radio' ? (React.createElement(Radio.Group, { style: { width: '100%', textAlign: "left" }, className: classesForm, onChange: function (e) {
                                         changeFun(e, itemSec);
                                     }, value: itemSec.value }, itemSec.options &&
                                     itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Radio, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? "" + itemOption[itemSec.optionsObj.key]
-                                                : "" + itemOption.key, key: itemSec.optionsObj && itemSec.optionsObj.key
-                                                ? itemOption[itemSec.optionsObj.key]
-                                                : itemOption.key }, itemSec.optionsObj && itemSec.optionsObj.value
-                                            ? itemOption[itemSec.optionsObj.value]
-                                            : itemOption.value));
+                                        return (React.createElement(Radio, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? "" + itemOption[itemSec.optionsObj.value]
+                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
+                                                ? itemOption[itemSec.optionsObj.value]
+                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
+                                            ? itemOption[itemSec.optionsObj.label]
+                                            : itemOption.label));
                                     }))) : null)))));
             })));
         });

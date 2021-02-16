@@ -12,8 +12,8 @@ export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
     style?: React.CSSProperties;
     /**设置 回调函数,参数一为当前表单的数据,参数二为当前行的传入数据 */
     callBcak?: (backData: any, item?: DataSourceType) => void;
-    /**设置 每一行表单的大小 'small' | 'middle' | 'large' */
-    size?: SizeType;
+    /**设置 每一行表单的大小 */
+    size?: 'small' | 'middle' | 'large' | undefined;
 }
 /**
  * 页面中最常用的的元素，适合于完成特定的交互

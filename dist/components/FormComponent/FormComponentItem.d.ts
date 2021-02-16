@@ -8,7 +8,7 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     key?: any;
     /**设置 是否必填*/
     must?: boolean;
-    /**设置 默认回显值格式statusMultiple: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
+    /**设置 默认回显值格式statusMultiple、checkbox: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
     value?: string;
     /**设置 每行的col className */
     colClassName?: string;
@@ -17,20 +17,20 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     /**设置 labelClassName的className*/
     labelClassName?: string;
     /**设置 type为select、checkbox、radio、status、statusMultiple时的选项，
-     * 格式[{key: '中国', value: '中国'}],选择返回key值
-     * checkbox、radio格式[{key: '中国', value: '中国', disabled: true}]
+     * 格式[{label: '中国', value: '中国'}],选择返回value值
+     * checkbox、radio格式[{label: '中国', value: '中国', disabled: true}]
      * 禁止某项
      */
     options?: object[];
-    /**设置 Select 的模式为多选或标签 multiple | tags*/
-    mode?: 'multiple' | 'tags';
-    /**设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{key: '中国', value: '中国'}]，
-     * 可以通过optionsObj实现，如[{label: '中国', value: '中国'}],设置optionsObj:{key:'label',value:'value'}
-     * 选择返回label值
+    /**设置 Select 的模式为多选或标签*/
+    mode?: 'multiple' | 'tags' | undefined;
+    /**设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{label: '中国', value: '中国'}]，
+     * 可以通过optionsObj实现，如[{key: '中国', value: '中国'}],设置optionsObj:{label:'label',value:'key'}
+     * 选择返回key值
     */
     optionsObj?: {
-        key: string;
         value: string;
+        label: string;
     };
     /**设置 type为time、timeRange的时间格式*/
     dateFormat?: string;
