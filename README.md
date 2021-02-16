@@ -1,7 +1,8 @@
 ## antd components library
 
-## 对于antd表单的二次封装，便于项目中方便使用，减少代码书写
 ## 使用 React+typescript 的组件库
+
+对于antd表单的二次封装，便于项目中方便使用，减少代码书写
 
 ~~~bash
 //启动本地环境
