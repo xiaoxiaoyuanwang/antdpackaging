@@ -2,8 +2,12 @@
 
 ## 使用 React+typescript 的组件库
 
-对于antd表单的二次封装，便于项目中方便使用，减少代码书写
+~~~bash
+
+对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
 支持多种input、select、time方法，请参考antd
+
+~~~
 
 ~~~bash
 //启动本地环境
