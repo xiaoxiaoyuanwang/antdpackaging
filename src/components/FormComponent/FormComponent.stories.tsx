@@ -3,7 +3,8 @@ import { Button } from 'antd'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import FormComponent from './FormComponent'
-import FormComponentItem, { FormComponentItemProps } from './FormComponentItem'
+import FormComponentItem from './FormComponentItem'
+import { disabledStartDt } from '../../utils/utils'
 export interface FormProps {
   name: string;
   names: string[];
@@ -62,24 +63,24 @@ const defaultFormComponent = () => {
   let sourceList = [
     [ // 多选
       {
-        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, key: 'names', query: true,
+        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, name: 'names', query: true,
         options: QuickSearchTypeDic,
       },
     ],
     [ // 单选
       {
-        type: 'status', md: 24, label: '单选', value: currentObj.name, key: 'name', query: true,
+        type: 'status', md: 24, label: '单选', value: currentObj.name, name: 'name', query: true,
         options: QuickSearchTypeDic
       },
     ],
     [
-      { type: 'input', must: true, hint: true, hintText: '友情提示', label: 'Username', value: currentObj.Username, key: 'Username' },
+      { type: 'input', addonBefore:"http://", must: true, hint: true, hintText: '友情提示', label: 'Username', value: currentObj.Username, name: 'Username' },
       {
         type: 'select', label: 'AreaLabel',
         mode: 'multiple',
         options: QuickSearch,
-        optionsObj: { label: 'label', value: 'key' },
-        value: currentObj.AreaLabel, key: 'AreaLabel'
+        optionsObj: { label: 'key', value: 'key' },
+        value: currentObj.AreaLabel, name: 'AreaLabel'
       },
       {
         type: 'select', label: 'Area',
@@ -88,13 +89,18 @@ const defaultFormComponent = () => {
           console.log(e)
         },
         options: QuickSearch,
-        value: currentObj.Area, key: 'Area'
+        value: currentObj.Area, name: 'Area'
       }
     ],
     [
-      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
+      { type: 'time', label: 'time', value: currentObj.time, name: 'time',
+      disabledDate: (e:any)=>{
+        // 自定义方法
+        return disabledStartDt(e, '', '',true)
+      }
+    },
       {
-        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
+        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, name: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
       }
     ],
     [
@@ -102,16 +108,16 @@ const defaultFormComponent = () => {
         type: 'checkbox', label: 'checkbox',
         options: QuickSearch,
         optionsObj: { label: 'value', value: 'key' },
-        value: currentObj.checkbox, key: 'checkbox'
+        value: currentObj.checkbox, name: 'checkbox'
       },
       {
         type: 'radio', label: 'radio',
         options: QuickSearch,
-        value: currentObj.radio, key: 'radio'
+        value: currentObj.radio, name: 'radio'
       },
       {
         type: 'buttons',
-        key: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
+        name: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
           <Button type="primary" onClick={() => {
             query()
             action('callBcak')
@@ -123,7 +129,7 @@ const defaultFormComponent = () => {
       }
     ]
   ]
-  const query = (dt?:any, item?:FormComponentItemProps) => {
+  const query = (dt?:any, item?:any) => {
     if (dt) {
       // 点击后立即获取数据
       if (item&&item.query) {
@@ -134,7 +140,7 @@ const defaultFormComponent = () => {
       console.log('点击按钮后获取数据',currentObj)
     }
   }
-  const callBcak = (dt: any, item?: FormComponentItemProps) => {
+  const callBcak = (dt: any, item?: any) => {
     console.log('callBcak回调数据' , dt, item)
     setObj(dt)
     query(dt, item)

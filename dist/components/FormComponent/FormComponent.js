@@ -30,7 +30,7 @@ import 'moment/locale/zh-cn';
 import { checkTypeBackArray } from '../../utils/utils';
 moment.locale('zh-cn');
 var RangePicker = DatePicker.RangePicker;
-var dateFormat = 'YYYY-MM-DD';
+var dateFormatBase = 'YYYY-MM-DD';
 /**
  * 页面中最常用的的元素，适合于完成特定的交互
  * ### 引用方法
@@ -42,7 +42,7 @@ var dateFormat = 'YYYY-MM-DD';
 export var FormComponent = function (props) {
     var className = props.className, style = props.style, sourceList = props.sourceList, children = props.children, size = props.size, callBcak = props.callBcak, restProps = __rest(props, ["className", "style", "sourceList", "children", "size", "callBcak"]);
     var _a = useState({}), currentObj = _a[0], setObj = _a[1];
-    var _b = useState(), currentDt = _b[0], setDt = _b[1];
+    // const [currentDt, setDt] = useState<any>()
     useEffect(function () {
         init(sourceList);
     }, []);
@@ -60,7 +60,7 @@ export var FormComponent = function (props) {
     function changeFun(e, obj, opt) {
         var val;
         if (obj.type === 'time') {
-            val = moment(e).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(e).format(obj.dateFormat || dateFormat);
+            val = moment(e).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(e).format(obj.dateFormat || dateFormatBase);
         }
         else if (obj.type === 'timeRange') {
             try {
@@ -68,8 +68,8 @@ export var FormComponent = function (props) {
                     var arg0 = e[0];
                     var arg1 = e[1];
                     val = [
-                        moment(arg0).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(arg0).format(obj.dateFormat || dateFormat),
-                        moment(arg1).format(obj.dateFormat || dateFormat) === 'Invalid date' ? '' : moment(arg1).format(obj.dateFormat || dateFormat),
+                        moment(arg0).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(arg0).format(obj.dateFormat || dateFormatBase),
+                        moment(arg1).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(arg1).format(obj.dateFormat || dateFormatBase),
                     ];
                 }
                 else {
@@ -84,7 +84,7 @@ export var FormComponent = function (props) {
             val = e && e.target ? e.target.value : e;
         }
         var currentObjNew = JSON.parse(JSON.stringify(currentObj));
-        currentObjNew[obj.key] = val;
+        currentObjNew[obj.key || obj.name] = val;
         back(currentObjNew, obj);
         setObj(currentObjNew);
     }
@@ -92,7 +92,7 @@ export var FormComponent = function (props) {
     function styleStatus(value, obj) {
         var currentObjNew = JSON.parse(JSON.stringify(currentObj));
         if (obj.type === 'statusMultiple') {
-            var oldMultiple = currentObj[obj.key] ? JSON.parse(JSON.stringify(currentObj[obj.key])) : '';
+            var oldMultiple = currentObj[obj.key || obj.name] ? JSON.parse(JSON.stringify(currentObj[obj.key || obj.name])) : '';
             if (!value) {
                 oldMultiple = [];
             }
@@ -106,10 +106,10 @@ export var FormComponent = function (props) {
             else {
                 oldMultiple.push(value);
             }
-            currentObjNew[obj.key] = checkTypeBackArray(oldMultiple);
+            currentObjNew[obj.key || obj.name] = checkTypeBackArray(oldMultiple);
         }
         else {
-            currentObjNew[obj.key] = value;
+            currentObjNew[obj.key || obj.name] = value;
         }
         back(currentObjNew, obj);
         setObj(currentObjNew);
@@ -123,7 +123,7 @@ export var FormComponent = function (props) {
         data.forEach(function (itemOne) {
             itemOne.forEach(function (itemSec) {
                 if (itemSec.type !== 'text' && itemSec.type !== 'buttons') {
-                    obj[itemSec.key] = itemSec.value;
+                    obj[itemSec.key || itemSec.name] = itemSec.value;
                 }
             });
         });
@@ -137,117 +137,110 @@ export var FormComponent = function (props) {
         return data.map(function (itemOne, indexOne) {
             return (React.createElement(Row, { key: indexOne, className: classesRow }, itemOne.map(function (itemSec, indexSec) {
                 var _a, _b;
-                var classesCol = classNames('antdpackaging_col', itemSec.colClassName);
-                var classesLabel = classNames('antdpackaging_label', itemSec.labelClassName, (_a = {},
+                var optionsObj = itemSec.optionsObj, value = itemSec.value, type = itemSec.type, label = itemSec.label, must = itemSec.must, name = itemSec.name, key = itemSec.key, options = itemSec.options, colStyle = itemSec.colStyle, labelStyle = itemSec.labelStyle, styleWrapper = itemSec.styleWrapper, colClassName = itemSec.colClassName, labelClassName = itemSec.labelClassName, formClassName = itemSec.formClassName, md = itemSec.md, hint = itemSec.hint, hintText = itemSec.hintText, 
+                // disabledDate,
+                dateFormat = itemSec.dateFormat, 
+                // disabledTime,
+                itemSecProps = __rest(itemSec, ["optionsObj", "value", "type", "label", "must", "name", "key", "options", "colStyle", "labelStyle", "styleWrapper", "colClassName", "labelClassName", "formClassName", "md", "hint", "hintText", "dateFormat"]);
+                var classesCol = classNames('antdpackaging_col', colClassName);
+                var classesLabel = classNames('antdpackaging_label', labelClassName, (_a = {},
                     _a["antdpackaging_size_" + size] = size,
                     _a));
-                var classesStatus = classNames('antdpackaging_status', itemSec.labelClassName, (_b = {},
+                var classesStatus = classNames('antdpackaging_status', labelClassName, (_b = {},
                     _b["antdpackaging_status_" + size] = size,
                     _b));
-                var classesForm = classNames(itemSec.formClassName);
-                if (itemSec.type === 'buttons') {
-                    return (React.createElement(Col, { md: itemSec.md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) }, itemSec.key));
+                var classesForm = classNames(formClassName);
+                if (type === 'buttons') {
+                    return (React.createElement(Col, { md: md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, colStyle) }, key || name));
                 }
-                if (itemSec.type === 'status' || itemSec.type === 'statusMultiple') {
-                    return (React.createElement(Col, { md: itemSec.md || 24, sm: 24, key: indexSec, className: classNames('antdpackaging_status_col', classesCol), style: __assign({}, itemSec.colStyle) },
-                        React.createElement("div", { className: 'antdpackaging_status_wrapper', style: __assign({}, itemSec.styleWrapper) },
-                            React.createElement("div", { className: classesStatus, style: __assign({}, itemSec.labelStyle) },
-                                itemSec.must ?
+                if (type === 'status' || type === 'statusMultiple') {
+                    return (React.createElement(Col, { md: md || 24, sm: 24, key: indexSec, className: classNames('antdpackaging_status_col', classesCol), style: __assign({}, colStyle) },
+                        React.createElement("div", { className: 'antdpackaging_status_wrapper', style: __assign({}, styleWrapper) },
+                            React.createElement("div", { className: classesStatus, style: __assign({}, labelStyle) },
+                                must ?
                                     React.createElement("span", { style: { color: 'red' } }, "*")
                                     : null,
-                                itemSec.label),
-                            React.createElement("div", { style: { flex: 1, textAlign: 'left' } }, itemSec.options &&
-                                itemSec.options.map(function (itemOption, indexOption) {
+                                label),
+                            React.createElement("div", { style: { flex: 1, textAlign: 'left' } }, options &&
+                                options.map(function (itemOption, indexOption) {
                                     var _a;
-                                    var keyres = itemSec.optionsObj && itemSec.optionsObj.value
-                                        ? itemOption[itemSec.optionsObj.value]
+                                    var keyres = optionsObj && optionsObj.value
+                                        ? itemOption[optionsObj.value]
                                         : itemOption.value;
-                                    var valres = itemSec.optionsObj && itemSec.optionsObj.label
-                                        ? itemOption[itemSec.optionsObj.label]
+                                    var valres = optionsObj && optionsObj.label
+                                        ? itemOption[optionsObj.label]
                                         : itemOption.label;
                                     var classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, (_a = {},
                                         _a["antdpackaging_status_item_" + size] = size,
-                                        _a["selButton"] = checkTypeBackArray(currentObj[itemSec.key]).indexOf((keyres).toString()) > -1 ||
-                                            (checkTypeBackArray(currentObj[itemSec.key]).length === 0 && keyres === ''),
+                                        _a["selButton"] = checkTypeBackArray(currentObj[key || name]).indexOf((keyres).toString()) > -1 ||
+                                            (checkTypeBackArray(currentObj[key || name]).length === 0 && keyres === ''),
                                         _a));
                                     return (React.createElement("div", { onClick: function () {
                                             styleStatus(keyres, itemSec);
                                         }, key: indexOption, className: classesStatusItem }, valres));
                                 })))));
                 }
-                return (React.createElement(Col, { md: itemSec.md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, itemSec.colStyle) },
+                return (React.createElement(Col, { md: md || 8, sm: 24, key: indexSec, className: classesCol, style: __assign({}, colStyle) },
                     React.createElement("div", null,
                         React.createElement("div", { style: { display: 'flex', } },
-                            React.createElement("div", { className: classesLabel, style: __assign({}, itemSec.labelStyle) },
-                                itemSec.must ?
+                            React.createElement("div", { className: classesLabel, style: __assign({}, labelStyle) },
+                                must ?
                                     React.createElement("span", { style: { color: 'red' } }, "*")
                                     : null,
-                                itemSec.label,
-                                itemSec.hint ? (React.createElement(TooltipAnt, { placement: "top", title: function () { return React.createElement("div", null, itemSec.hintText); } },
+                                label,
+                                hint ? (React.createElement(TooltipAnt, { placement: "top", title: function () { return React.createElement("div", null, hintText); } },
                                     React.createElement(QuestionCircleOutlined, { className: 'antdpackaging_hint' }))) : null,
                                 "\uFF1A"),
                             React.createElement("div", { className: "antdpackaging_form_wrapper" },
-                                itemSec.type === 'text' ? itemSec.key : null,
-                                itemSec.type === 'input' ? (React.createElement(Input, { className: classesForm, size: size, allowClear: itemSec.allowClear, maxLength: itemSec.maxLength, disabled: itemSec.disabled, placeholder: "\u8BF7\u8F93\u5165", value: itemSec.value, onChange: function (e) {
+                                type === 'text' ? (key || name) : null,
+                                type === 'input' ? (React.createElement(Input, __assign({ className: classesForm, size: size, placeholder: "\u8BF7\u8F93\u5165" }, itemSecProps, { onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    } })) : null,
-                                itemSec.type === 'select' && !itemSec.showSearch ? (React.createElement(Select, { className: classesForm, size: size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', value: itemSec.value, onChange: function (e, opt) {
+                                    } }))) : null,
+                                type === 'select' ? (React.createElement(Select, __assign({ className: classesForm, size: size, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: '请选择' }, itemSecProps, { value: (value), onChange: function (e, opt) {
                                         changeFun(e, itemSec, opt);
-                                    } }, itemSec.options &&
-                                    itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? "" + itemOption[itemSec.optionsObj.value]
-                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? itemOption[itemSec.optionsObj.value]
-                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
-                                            ? itemOption[itemSec.optionsObj.label]
+                                    } }), options &&
+                                    options.map(function (itemOption, indexOption) {
+                                        return (React.createElement(Select.Option, __assign({}, itemOption, { items: itemOption, value: optionsObj && optionsObj.value
+                                                ? "" + itemOption[optionsObj.value]
+                                                : "" + itemOption.value, key: optionsObj && optionsObj.value
+                                                ? itemOption[optionsObj.value]
+                                                : itemOption.value }), optionsObj && optionsObj.label
+                                            ? itemOption[optionsObj.label]
                                             : itemOption.label));
                                     }))) : null,
-                                itemSec.type === 'select' && itemSec.showSearch ? (React.createElement(Select, { className: classesForm, size: size, mode: itemSec.mode, allowClear: itemSec.allowClear, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: itemSec.placeholder || '请选择', showSearch: itemSec.showSearch ? itemSec.showSearch : undefined, value: itemSec.value, onSearch: function (e) { return (itemSec.showSearch && itemSec.onSearch ? itemSec.onSearch(e) : undefined); }, onChange: function (e, opt) {
-                                        changeFun(e, itemSec, opt);
-                                    } }, itemSec.options &&
-                                    itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Select.Option, { items: itemOption, value: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? "" + itemOption[itemSec.optionsObj.value]
-                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? itemOption[itemSec.optionsObj.value]
-                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
-                                            ? itemOption[itemSec.optionsObj.label]
-                                            : itemOption.label));
-                                    }))) : null,
-                                itemSec.type === 'time' ? (React.createElement(DatePicker, { className: classesForm, size: size, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, value: itemSec.value ? moment(itemSec.value, itemSec.dateFormat || dateFormat) : undefined, onChange: function (e) {
+                                type === 'time' ? (React.createElement(DatePicker, __assign({ style: { width: '100%' }, className: classesForm, size: size, placeholder: "\u8BF7\u9009\u62E9\u65E5\u671F" }, itemSecProps, { value: value ? moment(value, dateFormat || dateFormatBase) : undefined, onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    }, disabled: itemSec.disabled, style: { width: '100%' }, placeholder: "\u8BF7\u9009\u62E9\u65E5\u671F" })) : null,
-                                itemSec.type === 'timeRange' ? (React.createElement(RangePicker, { className: classesForm, disabledDate: function (e) { return itemSec.disabledDate ? itemSec.disabledDate(e) : null; }, disabledTime: function (_, type) { return itemSec.disabledTime ? itemSec.disabledTime(_, type) : null; }, value: itemSec.value && itemSec.value.length > 0
+                                    } }))) : null,
+                                type === 'timeRange' ? (React.createElement(RangePicker, __assign({ style: { width: '100%' }, className: classesForm }, itemSecProps, { value: value && value.length > 0
                                         ? [
-                                            moment(itemSec.value[0], itemSec.dateFormat || dateFormat),
-                                            moment(itemSec.value[1], itemSec.dateFormat || dateFormat)
+                                            moment(value[0], dateFormat || dateFormatBase),
+                                            moment(value[1], dateFormat || dateFormatBase)
                                         ]
                                         : null, onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    }, disabled: itemSec.disabled, showTime: itemSec.showTime, style: { width: '100%' } })) : null,
-                                itemSec.type === 'checkbox' ? (React.createElement(Checkbox.Group, { style: { width: '100%', textAlign: "left" }, className: classesForm, value: checkTypeBackArray(itemSec.value), onChange: function (e) {
+                                    } }))) : null,
+                                type === 'checkbox' ? (React.createElement(Checkbox.Group, __assign({ style: { width: '100%', textAlign: "left" }, className: classesForm }, itemSecProps, { value: checkTypeBackArray(value), onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    } }, itemSec.options &&
-                                    itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Checkbox, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? "" + itemOption[itemSec.optionsObj.value]
-                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? itemOption[itemSec.optionsObj.value]
-                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
-                                            ? itemOption[itemSec.optionsObj.label]
+                                    } }), options &&
+                                    options.map(function (itemOption, indexOption) {
+                                        return (React.createElement(Checkbox, __assign({}, itemOption, { value: optionsObj && optionsObj.value
+                                                ? "" + itemOption[optionsObj.value]
+                                                : "" + itemOption.value, key: optionsObj && optionsObj.value
+                                                ? itemOption[optionsObj.value]
+                                                : itemOption.value }), optionsObj && optionsObj.label
+                                            ? itemOption[optionsObj.label]
                                             : itemOption.label));
                                     }))) : null,
-                                itemSec.type === 'radio' ? (React.createElement(Radio.Group, { style: { width: '100%', textAlign: "left" }, className: classesForm, onChange: function (e) {
+                                type === 'radio' ? (React.createElement(Radio.Group, __assign({ style: { width: '100%', textAlign: "left" }, className: classesForm }, itemSecProps, { onChange: function (e) {
                                         changeFun(e, itemSec);
-                                    }, value: itemSec.value }, itemSec.options &&
-                                    itemSec.options.map(function (itemOption, indexOption) {
-                                        return (React.createElement(Radio, { disabled: itemOption.disabled, value: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? "" + itemOption[itemSec.optionsObj.value]
-                                                : "" + itemOption.value, key: itemSec.optionsObj && itemSec.optionsObj.value
-                                                ? itemOption[itemSec.optionsObj.value]
-                                                : itemOption.value }, itemSec.optionsObj && itemSec.optionsObj.label
-                                            ? itemOption[itemSec.optionsObj.label]
+                                    }, value: value }), options &&
+                                    options.map(function (itemOption, indexOption) {
+                                        return (React.createElement(Radio, __assign({}, itemOption, { value: optionsObj && optionsObj.value
+                                                ? "" + itemOption[optionsObj.value]
+                                                : "" + itemOption.value, key: optionsObj && optionsObj.value
+                                                ? itemOption[optionsObj.value]
+                                                : itemOption.value }), optionsObj && optionsObj.label
+                                            ? itemOption[optionsObj.label]
                                             : itemOption.label));
                                     }))) : null)))));
             })));

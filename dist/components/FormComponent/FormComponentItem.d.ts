@@ -4,8 +4,8 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     type?: string;
     /**设置 label名称 */
     label?: string;
-    /**设置 返回主键值， type为text、buttons时返回传入值*/
-    key?: any;
+    /**设置 返回主键值， 当type为text、buttons时返回传入值*/
+    name?: any;
     /**设置 是否必填*/
     must?: boolean;
     /**设置 默认回显值格式statusMultiple、checkbox: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
@@ -50,14 +50,6 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
     labelStyle?: React.CSSProperties;
     /**设置 type为status、statusMultiple的容器样式*/
     styleWrapper?: React.CSSProperties;
-    showSearch?: boolean;
-    disabled?: boolean;
-    showTime?: boolean;
-    maxLength?: number;
-    allowClear?: boolean;
-    disabledDate?: (e: any, opt?: any) => any;
-    disabledTime?: (e: any, opt?: any) => any;
-    onSearch?: (e: string) => void;
     onChange?: (e: any, opt?: any) => void;
 }
 declare const FormComponentItem: React.FC<FormComponentItemProps>;

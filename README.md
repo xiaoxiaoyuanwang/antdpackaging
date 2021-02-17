@@ -3,6 +3,7 @@
 ## 使用 React+typescript 的组件库
 
 对于antd表单的二次封装，便于项目中方便使用，减少代码书写
+支持多种input、select、time方法，请参考antd
 
 ~~~bash
 //启动本地环境
@@ -73,24 +74,24 @@ function App() {
   let sourceList = [
     [ // 多选
       {
-        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, key: 'names', query: true,
+        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, name: 'names', query: true,
         options: QuickSearchTypeDic,
       },
     ],
     [ // 单选
       {
-        type: 'status', md: 24, label: '单选', value: currentObj.name, key: 'name', query: true,
+        type: 'status', md: 24, label: '单选', value: currentObj.name, name: 'name', query: true,
         options: QuickSearchTypeDic
       },
     ],
     [
-      { type: 'input', must: true, hint: true, hintText: '友情提示', label: 'Username', value: currentObj.Username, key: 'Username' },
+      { type: 'input', addonBefore:"http://", must: true, hint: true, hintText: '友情提示', label: 'Username', value: currentObj.Username, name: 'Username' },
       {
         type: 'select', label: 'AreaLabel',
         mode: 'multiple',
         options: QuickSearch,
-        optionsObj: { label: 'label', value: 'key' },
-        value: currentObj.AreaLabel, key: 'AreaLabel'
+        optionsObj: { label: 'key', value: 'key' },
+        value: currentObj.AreaLabel, name: 'AreaLabel'
       },
       {
         type: 'select', label: 'Area',
@@ -99,13 +100,18 @@ function App() {
           console.log(e)
         },
         options: QuickSearch,
-        value: currentObj.Area, key: 'Area'
+        value: currentObj.Area, name: 'Area'
       }
     ],
     [
-      { type: 'time', label: 'time', value: currentObj.time, key: 'time' },
+      { type: 'time', label: 'time', value: currentObj.time, name: 'time',
+      disabledDate: (e)=>{
+        // 自定义方法
+        // return disabledStartDt(e, '', '',true)
+      }
+    },
       {
-        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, key: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
+        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, name: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
       }
     ],
     [
@@ -113,16 +119,16 @@ function App() {
         type: 'checkbox', label: 'checkbox',
         options: QuickSearch,
         optionsObj: { label: 'value', value: 'key' },
-        value: currentObj.checkbox, key: 'checkbox'
+        value: currentObj.checkbox, name: 'checkbox'
       },
       {
         type: 'radio', label: 'radio',
         options: QuickSearch,
-        value: currentObj.radio, key: 'radio'
+        value: currentObj.radio, name: 'radio'
       },
       {
         type: 'buttons',
-        key: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
+        name: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
           <Button type="primary" onClick={() => {
             query()
             action('callBcak')
@@ -249,11 +255,11 @@ export default App;
         <td>设置 label名称</td>
       </tr>
       <tr>
-        <td class="info-table-monospace">key</td>
+        <td class="info-table-monospace">name</td>
         <td class="info-table-monospace"><span>any</span></td>
         <td>-</td>
         <td>-</td>
-        <td>设置 返回主键值， type为text、buttons时返回传入值</td>
+        <td>设置 返回主键值， 当type为text、buttons时返回传入值</td>
       </tr>
       <tr>
         <td class="info-table-monospace">must</td>
@@ -377,62 +383,6 @@ export default App;
         <td>-</td>
         <td>-</td>
         <td>设置 type为status、statusMultiple的容器样式</td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">showSearch</td>
-        <td class="info-table-monospace"><span>boolean</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">disabled</td>
-        <td class="info-table-monospace"><span>boolean</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">showTime</td>
-        <td class="info-table-monospace"><span>boolean</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">maxLength</td>
-        <td class="info-table-monospace"><span>number</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">allowClear</td>
-        <td class="info-table-monospace"><span>boolean</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">disabledDate</td>
-        <td class="info-table-monospace"><span>((e: any, opt?: any) =&gt; any)</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">disabledTime</td>
-        <td class="info-table-monospace"><span>((e: any, opt?: any) =&gt; any)</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="info-table-monospace">onSearch</td>
-        <td class="info-table-monospace"><span>((e: string) =&gt; void)</span></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
       </tr>
       <tr>
         <td class="info-table-monospace">onChange</td>
