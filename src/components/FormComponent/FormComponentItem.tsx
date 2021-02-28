@@ -6,10 +6,14 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
   label?: string;
   /**设置 返回主键值， 当type为text、buttons时返回传入值*/
   name?: any;
-  /**设置 是否必填*/
-  must?: boolean;
   /**设置 默认回显值格式statusMultiple、checkbox: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
   value?: string;
+  /**设置 是否必填*/
+  must?: boolean;
+  /**设置 表单校验*/
+  checkFormItem?: boolean;
+  /**设置 表单校验提示信息*/
+  message?: string;
   /**设置 每行的col className */
   colClassName?: string;
   /**设置 form的className*/
@@ -35,6 +39,10 @@ export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
   placeholder?: string;
   /**设置 值改变后是否立即查询，需在回调callBcak中判断*/
   query?: boolean;
+  /**设置 正则表达式*/
+  pattern?: string;
+  /**设置 正则表达式提示信息*/
+  patternmsg?: string;
   /**设置 是否有hint*/
   hint?: boolean;
   /**设置 是否有hint内容*/

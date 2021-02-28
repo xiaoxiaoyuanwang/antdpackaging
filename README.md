@@ -2,183 +2,261 @@
 
 ## 使用 React+typescript 的组件库
 
-~~~bash
+```bash
+
+新增表单验证以及正则表达，示例：
+
+```
+
+```javascript
+
+  <FormComponent
+    checkForm
+    callBcak={(dt, item) => {
+      callBcak(dt, item);
+    }}
+    sourceList={sourceList}
+    cRef={childRef}
+  />
+
+```
+
+```bash
 
 对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
 支持多种input、select、time方法，请参考antd
 
-~~~
+```
 
-~~~bash
+```bash
 //启动本地环境
 npm run stroybook
 
-~~~
+```
 
 <p align="center">
   <img width="900" src="./src/assets/example.png">
 </p>
 
-~~~javascript
+```javascript
 npm install antdpackaging --save
-~~~
+```
 
 ### 使用
-~~~javascript
+
+```javascript
 // 加载样式
-import 'antdpackaging/dist/index.css'
+import "antdpackaging/dist/index.css";
 
 // 引入组件
-import { FormComponent } from 'antdpackaging'
+import { FormComponent } from "antdpackaging";
 
 // 代码示例
 function App() {
-  const [ currentObj, setObj ] = useState({
-    name: '',
-    names: ['Jack-value', 'Lucy-value'],
-    Username: '',
-    AreaLabel: ['shanghai'],
-    Area: '',
-    time: '',
+  const childRef = useRef(null);
+  const [currentObj, setObj] = useState({
+    name: "",
+    names: ["Jack-value"],
+    Username: "",
+    AreaLabel: ["shanghai"],
+    Area: "",
+    time: "",
     timeRange: [],
-    checkbox: ['beijing', 'shanghai'],
-    radio: '北京',
+    checkbox: ["beijing", "shanghai"],
+    radio: "",
   });
   let QuickSearchTypeDic = [
     {
-      'value': '',
-      'label': '所有'
+      value: "",
+      label: "所有",
     },
     {
-      'value': 'Jack-value',
-      'label': 'Jack'
+      value: "Jack-value",
+      label: "Jack",
     },
     {
-      'value': 'Lucy-value',
-      'label': 'Lucy'
+      value: "Lucy-value",
+      label: "Lucy",
     },
     {
-      'value': 'Tom-value',
-      'label': 'Tom'
-    }
+      value: "Tom-value",
+      label: "Tom",
+    },
   ];
   let QuickSearch = [
     {
-      key: 'beijing',
+      key: "beijing",
       disabled: true,
-      value: '北京',
-      label: '北京'
+      value: "北京",
+      label: "北京",
     },
     {
-      key: 'shanghai',
-      value: '上海',
-      label: '上海'
-    }
+      key: "shanghai",
+      value: "上海",
+      label: "上海",
+    },
   ];
   let sourceList = [
-    [ // 多选
+    [
+      // 多选
       {
-        type: 'statusMultiple', md: 24, label: '多选', value: currentObj.names, name: 'names', query: true,
+        type: "statusMultiple",
+        md: 24,
+        label: "多选",
+        value: currentObj.names,
+        name: "names",
+        query: true,
         options: QuickSearchTypeDic,
       },
     ],
-    [ // 单选
+    [
+      // 单选
       {
-        type: 'status', md: 24, label: '单选', value: currentObj.name, name: 'name', query: true,
-        options: QuickSearchTypeDic
+        type: "status",
+        md: 24,
+        label: "单选",
+        value: currentObj.name,
+        name: "name",
+        query: true,
+        options: QuickSearchTypeDic,
       },
     ],
     [
-      { type: 'input', addonBefore:"http://", must: true, hint: true, hintText: '友情提示', label: 'Username', value: currentObj.Username, name: 'Username' },
       {
-        type: 'select', label: 'AreaLabel',
-        mode: 'multiple',
-        options: QuickSearch,
-        optionsObj: { label: 'key', value: 'key' },
-        value: currentObj.AreaLabel, name: 'AreaLabel'
+        type: "input",
+        addonBefore: "http://",
+        must: true,
+        hint: true,
+        hintText: "友情提示",
+        label: "Username",
+        pattern: /^[0-9]*$/,
+        patternmsg: "请输入数字",
+        value: currentObj.Username,
+        name: "Username",
+        onChange: (e) => {
+          console.log("onChange", e);
+        },
       },
       {
-        type: 'select', label: 'Area',
+        type: "select",
+        label: "AreaLabel",
+        must: true,
+        mode: "multiple",
+        options: QuickSearch,
+        optionsObj: { label: "key", value: "key" },
+        value: currentObj.AreaLabel,
+        name: "AreaLabel",
+      },
+      {
+        type: "select",
+        label: "Area",
+        must: true,
         showSearch: true,
-        onSearch: (e: string) => {
-          console.log(e)
+        onSearch: (e) => {
+          console.log(e);
         },
         options: QuickSearch,
-        value: currentObj.Area, name: 'Area'
-      }
-    ],
-    [
-      { type: 'time', label: 'time', value: currentObj.time, name: 'time',
-      disabledDate: (e)=>{
-        // 自定义方法
-        // return disabledStartDt(e, '', '',true)
-      }
-    },
-      {
-        type: 'timeRange', md: 16, label: 'timeRange', value: currentObj.timeRange, name: 'timeRange', showTime: true, dateFormat: 'YYYY-MM-DD HH:mm:ss'
-      }
+        value: currentObj.Area,
+        name: "Area",
+      },
     ],
     [
       {
-        type: 'checkbox', label: 'checkbox',
-        options: QuickSearch,
-        optionsObj: { label: 'value', value: 'key' },
-        value: currentObj.checkbox, name: 'checkbox'
+        type: "time",
+        label: "time",
+        value: currentObj.time,
+        name: "time",
+        disabledDate: (e) => {
+          // 自定义方法
+          // return disabledStartDt(e, '', '',true)
+        },
       },
       {
-        type: 'radio', label: 'radio',
+        type: "timeRange",
+        md: 16,
+        label: "timeRange",
+        value: currentObj.timeRange,
+        name: "timeRange",
+        showTime: true,
+        dateFormat: "YYYY-MM-DD HH:mm:ss",
+      },
+    ],
+    [
+      {
+        type: "checkbox",
+        label: "checkbox",
         options: QuickSearch,
-        value: currentObj.radio, name: 'radio'
+        optionsObj: { label: "value", value: "key" },
+        value: currentObj.checkbox,
+        name: "checkbox",
       },
       {
-        type: 'buttons',
-        name: <div style={{ marginLeft: '10px', textAlign: 'right' }}>
-          <Button type="primary" onClick={() => {
-            query()
-            action('callBcak')
-          }
-          }>
-            获取数据
-          </Button>
-        </div>
-      }
-    ]
-  ]
+        type: "radio",
+        label: "radio",
+        options: QuickSearch,
+        value: currentObj.radio,
+        name: "radio",
+      },
+      {
+        type: "buttons",
+        name: (
+          <div style={{ marginLeft: "10px", textAlign: "right" }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                query();
+              }}
+            >
+              获取数据
+            </Button>
+          </div>
+        ),
+      },
+    ],
+  ];
 
-  const query = (dt, item) => {
+  const query = (dt) => {
     if (dt) {
       // 点击后立即获取数据
-      if (item&&item.query) {
-        console.log('点击后立即获取数据',dt)
+      if (dt.currentItem && dt.currentItem.query) {
+        console.log("点击后立即获取数据", dt);
       }
     } else {
+      let data = childRef.current.getInfo();
+      if (data.error) {
+        console.log("请填写完整的数据", data);
+      }
       // 点击获取数据按钮后获取数据
-      console.log('点击查询按钮后获取数据',currentObj)
+      console.log("点击查询按钮后获取数据", currentObj);
     }
-  }
+  };
   // useEffect(() => {
   //   if (currentItem && currentItem.query) {
   //     query()
   //   }
   // }, [currentObj]);
-  const callBcak = (dt, item) => {
+  const callBcak = (dt) => {
     // setItem(item)
-    setObj(dt)
-    query(dt, item)
-  }
+    setObj(dt.data);
+    query(dt);
+  };
   return (
     <div className="App">
-      <FormComponent callBcak={(dt, item) => {
-        callBcak(dt, item)
-      }
-      } sourceList={sourceList} />
+      <FormComponent
+        checkForm
+        callBcak={(dt) => {
+          callBcak(dt);
+        }}
+        sourceList={sourceList}
+        cRef={childRef}
+      />
     </div>
   );
 }
 
 export default App;
+```
 
-~~~
 <div>
   <h3 style="margin: 20px 0px 0px;">FormComponent Component</h3>
   <table class="info-table" style="width: 100%;">
@@ -228,6 +306,13 @@ export default App;
         <td><span>middle</span></td>
         <td>设置 每一行表单的大小</td>
       </tr>
+      <tr>
+        <td class="info-table-monospace">checkForm</td>
+        <td class="info-table-monospace"><span>	boolean</span></td>
+        <td>-</td>
+        <td><span>false</span></td>
+        <td>设置是否需要表单校验</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -266,6 +351,13 @@ export default App;
         <td>设置 返回主键值， 当type为text、buttons时返回传入值</td>
       </tr>
       <tr>
+        <td class="info-table-monospace">value</td>
+        <td class="info-table-monospace"><span>string</span></td>
+        <td>-</td>
+        <td>-</td>
+        <td>设置 默认回显值格式statusMultiple: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']</td>
+      </tr>
+      <tr>
         <td class="info-table-monospace">must</td>
         <td class="info-table-monospace"><span>boolean</span></td>
         <td>-</td>
@@ -273,11 +365,18 @@ export default App;
         <td>设置 是否必填</td>
       </tr>
       <tr>
-        <td class="info-table-monospace">value</td>
+        <td class="info-table-monospace">checkFormItem</td>
+        <td class="info-table-monospace"><span>boolean</span></td>
+        <td>-</td>
+        <td>false</td>
+        <td>设置 表单校验</td>
+      </tr>
+      <tr>
+        <td class="info-table-monospace">message</td>
         <td class="info-table-monospace"><span>string</span></td>
         <td>-</td>
         <td>-</td>
-        <td>设置 默认回显值格式statusMultiple: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']</td>
+        <td>设置 表单校验提示信息</td>
       </tr>
       <tr>
         <td class="info-table-monospace">colClassName</td>
@@ -347,6 +446,20 @@ export default App;
         <td>设置 值改变后是否立即查询，需在回调callBcak中判断</td>
       </tr>
       <tr>
+        <td class="info-table-monospace">pattern</td>
+        <td class="info-table-monospace"><span>string</span></td>
+        <td>-</td>
+        <td>-</td>
+        <td>设置 正则表达式</td>
+      </tr>
+      <tr>
+        <td class="info-table-monospace">patternmsg</td>
+        <td class="info-table-monospace"><span>string</span></td>
+        <td>-</td>
+        <td>-</td>
+        <td>设置 正则表达式提示信息</td>
+      </tr>
+      <tr>
         <td class="info-table-monospace">hint</td>
         <td class="info-table-monospace"><span>boolean</span></td>
         <td>-</td>
@@ -397,5 +510,3 @@ export default App;
       </tr>
     </tbody>
   </table>
-  
-

@@ -1,33 +1,19 @@
-import React, { useState, useRef } from 'react'
-import { Button } from 'antd'
-import { storiesOf } from '@storybook/react'
-import FormComponent from './FormComponent'
-import FormComponentItem from './FormComponentItem'
-import { disabledStartDt } from '../../utils/utils'
-export interface FormProps {
-  name: string;
-  names: string[];
-  Username: string;
-  AreaLabel: string[];
-  Area: any;
-  time: string;
-  timeRange: string[];
-  checkbox: string[];
-  radio: string;
-}
-export type DataSourceType<T = {}> = T & FormProps
-const defaultFormComponent = () => {
-  const childRef = useRef({});
-  const [ currentObj, setObj ] = useState<DataSourceType>({
-    name: '',
-    names: ['Jack-value', 'Lucy-value'],
-    Username: '',
-    AreaLabel: ['shanghai'],
-    Area: '',
-    time: '',
+import React, { useState, useRef } from "react";
+import { Button } from "antd";
+import FormComponent from "./components/FormComponent";
+
+function App() {
+  const childRef = useRef(null);
+  const [currentObj, setObj] = useState({
+    name: "",
+    names: ["Jack-value"],
+    Username: "",
+    AreaLabel: ["shanghai"],
+    Area: "",
+    time: "",
     timeRange: [],
-    checkbox: ['beijing', 'shanghai'],
-    radio: '北京',
+    checkbox: ["beijing", "shanghai"],
+    radio: "",
   });
   let QuickSearchTypeDic = [
     {
@@ -97,7 +83,7 @@ const defaultFormComponent = () => {
         patternmsg: "请输入数字",
         value: currentObj.Username,
         name: "Username",
-        onChange: (e:any) => {
+        onChange: (e) => {
           console.log("onChange", e);
         },
       },
@@ -116,7 +102,7 @@ const defaultFormComponent = () => {
         label: "Area",
         must: true,
         showSearch: true,
-        onSearch: (e:any) => {
+        onSearch: (e) => {
           console.log(e);
         },
         options: QuickSearch,
@@ -130,9 +116,9 @@ const defaultFormComponent = () => {
         label: "time",
         value: currentObj.time,
         name: "time",
-        disabledDate: (e:any) => {
+        disabledDate: (e) => {
           // 自定义方法
-          return disabledStartDt(e, '', '',true)
+          // return disabledStartDt(e, '', '',true)
         },
       },
       {
@@ -178,36 +164,43 @@ const defaultFormComponent = () => {
       },
     ],
   ];
-  const query = (dt?:any) => {
+
+  const query = (dt) => {
     if (dt) {
       // 点击后立即获取数据
       if (dt.currentItem && dt.currentItem.query) {
         console.log("点击后立即获取数据", dt);
       }
     } else {
-      // let data = childRef.current&&childRef.current.getInfo();
-      // if (data.error) {
-      //   console.log("请填写完整的数据", data);
-      // }
+      let data = childRef.current.getInfo();
+      if (data.error) {
+        console.log("请填写完整的数据", data);
+      }
       // 点击获取数据按钮后获取数据
       console.log("点击查询按钮后获取数据", currentObj);
     }
   };
-  const callBcak = (dt:any) => {
+  // useEffect(() => {
+  //   if (currentItem && currentItem.query) {
+  //     query()
+  //   }
+  // }, [currentObj]);
+  const callBcak = (dt) => {
+    // setItem(item)
     setObj(dt.data);
     query(dt);
   };
-  return <>
-    <FormComponent
-        checkForm
+  return (
+    <div className="App">
+      <FormComponent
         callBcak={(dt) => {
           callBcak(dt);
         }}
         sourceList={sourceList}
         cRef={childRef}
       />
-    <FormComponentItem />
-  </>
+    </div>
+  );
 }
-storiesOf('FormComponent Component', module)
-  .add('FormComponent', defaultFormComponent)
+
+export default App;

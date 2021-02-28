@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useImperativeHandle, useRef } from 'react'
 import {
   ConfigProvider,
   DatePicker,
@@ -36,6 +36,9 @@ export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   callBcak?: (backData: any, item?: any) => void;
   /**设置 每一行表单的大小 */
   size?: 'small' | 'middle' | 'large' | undefined;
+  cRef?: any;
+  /**设置是否需要表单校验 */
+  checkForm?: boolean;
 }
 /**
  * 页面中最常用的的元素，适合于完成特定的交互
@@ -52,23 +55,110 @@ export const FormComponent: FC<BaseProps> = (props) => {
     sourceList,
     children,
     size,
+    cRef,
+    checkForm,
     callBcak,
     ...restProps
   } = props
   const [currentObj, setObj] = useState({});
-  // const [currentDt, setDt] = useState<any>()
+  const [currentObjTip, setObjTip] = useState({});
+  let currentItem = useRef({})
   useEffect(() => {
     init(sourceList);
   }, []);
-  // useEffect(() => {
-  //   if (callBcak) {
-  //     callBcak(currentObj, currentDt);
-  //   }
-  // }, [currentObj]);
-  // 回调函数
-  function back(obj: object,item: any) {
+  // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+  useImperativeHandle(cRef, () => ({
+    // changeVal 就是暴露给父组件的方法
+    getInfo: () => {
+      checkRequired()
+      let errorTip: string = ''
+      for (const key in currentObjTip) {
+        if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
+          const element = currentObjTip[key];
+          if (element.error) {
+            errorTip = element.message
+          }
+        }
+      }
+      return { data: currentObj, error: errorTip, currentItem: {} }
+    }
+  }))
+  // 校验数据
+  function checkRequired() {
+    if (!sourceList) {
+      return;
+    }
+    const currentObjTips = JSON.parse(JSON.stringify(currentObjTip))
+    sourceList.forEach((itemOne: any) => {
+      itemOne.forEach((itemSec: any) => {
+        if (checkForm || itemSec.checkFormItem) {
+          const tip = {
+            error: false,
+            message: ''
+          }
+          const element = itemSec.key || itemSec.name
+          let requiredBack = requiredItem(itemSec)
+          if (itemSec.pattern) {
+            if (!(itemSec.pattern).test(currentObj[element])) {
+              tip.error = true
+              tip.message = itemSec.patternmsg || itemSec.message || `请填写正确格式的${itemSec.label}`
+            } else {
+              tip.error = requiredBack.error
+              tip.message = requiredBack.message
+            }
+          } else {
+            tip.error = requiredBack.error
+            tip.message = requiredBack.message
+          }
+          currentObjTips[element] = tip
+          setObjTip(currentObjTips)
+        }
+      });
+    });
+  }
+  function requiredItem(item: any) {
+    const element = item.key || item.name
+    let ItemObj = {
+      error: false,
+      message: ''
+    }
+    if (item.must) {
+      if (currentObj[element] === '' ||
+        currentObj[element] === null ||
+        currentObj[element] === undefined ||
+        JSON.stringify(currentObj[element]) === '[]' ||
+        JSON.stringify(currentObj[element]) === '{}'
+      ) {
+        ItemObj.error = true
+        ItemObj.message = item.message || `请填写${item.label}`
+      } else {
+        ItemObj.error = false
+        ItemObj.message = ''
+      }
+    }
+    return ItemObj
+  }
+  useEffect(() => {
+    // 校验
+    checkRequired()
     if (callBcak) {
-      callBcak(obj, item);
+      back()
+    }
+  }, [currentObj]);
+  // 回调函数
+  function back() {
+    checkRequired()
+    let errorTip: string = ''
+    for (const key in currentObjTip) {
+      if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
+        const element = currentObjTip[key];
+        if (element.error) {
+          errorTip = element.message
+        }
+      }
+    }
+    if (callBcak) {
+      callBcak({ data: currentObj, error: errorTip, currentItem: currentItem.current })
     }
   }
   function changeFun(e: any, obj: any, opt?: any) {
@@ -94,17 +184,17 @@ export const FormComponent: FC<BaseProps> = (props) => {
       val = e && e.target ? e.target.value : e;
     }
     let currentObjNew = JSON.parse(JSON.stringify(currentObj))
-    currentObjNew[obj.key||obj.name] = val
-    back(currentObjNew, obj)
+    currentObjNew[obj.key || obj.name] = val
+    obj.value = val
+    currentItem.current = obj
     setObj(currentObjNew)
-
   }
   // 单选或多选选中
   function styleStatus(value: string | number, obj: any) {
     let currentObjNew = JSON.parse(JSON.stringify(currentObj))
 
     if (obj.type === 'statusMultiple') {
-      let oldMultiple = currentObj[obj.key||obj.name] ? JSON.parse(JSON.stringify(currentObj[obj.key||obj.name])) : '';
+      let oldMultiple = currentObj[obj.key || obj.name] ? JSON.parse(JSON.stringify(currentObj[obj.key || obj.name])) : '';
       if (!value) {
         oldMultiple = [];
       } else {
@@ -116,11 +206,14 @@ export const FormComponent: FC<BaseProps> = (props) => {
       } else {
         oldMultiple.push(value);
       }
-      currentObjNew[obj.key||obj.name] = checkTypeBackArray(oldMultiple)
+      oldMultiple = oldMultiple.filter((item: string | number) => item != '')
+      currentObjNew[obj.key || obj.name] = checkTypeBackArray(oldMultiple)
     } else {
-      currentObjNew[obj.key||obj.name] = value
+      currentObjNew[obj.key || obj.name] = value
     }
-    back(currentObjNew, obj)
+    obj.value = value
+    currentItem.current = obj
+    // back(currentObjNew, obj)
     setObj(currentObjNew);
   }
   // 初始化渲染
@@ -132,7 +225,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
     data.forEach((itemOne: any) => {
       itemOne.forEach((itemSec: any) => {
         if (itemSec.type !== 'text' && itemSec.type !== 'buttons') {
-          obj[itemSec.key||itemSec.name] = itemSec.value
+          obj[itemSec.key || itemSec.name] = itemSec.value
         }
       });
     });
@@ -147,7 +240,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
       return (
         <Row key={indexOne} className={classesRow}>
           {itemOne.map((itemSec: any, indexSec: number) => {
-            const { 
+            const {
               optionsObj,
               value,
               type,
@@ -167,6 +260,8 @@ export const FormComponent: FC<BaseProps> = (props) => {
               hintText,
               // disabledDate,
               dateFormat,
+              onChange,
+              checkFormItem,
               // disabledTime,
               ...itemSecProps
             } = itemSec
@@ -189,7 +284,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                     ...colStyle
                   }}
                 >
-                  {key||name}
+                  {key || name}
                 </Col>
               );
             }
@@ -199,7 +294,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                   md={md || 24}
                   sm={24}
                   key={indexSec}
-                  className={classNames('antdpackaging_status_col',classesCol)}
+                  className={classNames('antdpackaging_status_col', classesCol)}
                   style={{
                     ...colStyle
                   }}
@@ -232,10 +327,10 @@ export const FormComponent: FC<BaseProps> = (props) => {
                             : itemOption.label
                           const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
                             [`antdpackaging_status_item_${size}`]: size,
-                            "selButton": checkTypeBackArray(currentObj[key||name]).indexOf(
+                            "selButton": checkTypeBackArray(currentObj[key || name]).indexOf(
                               (keyres).toString()
                             ) > -1 ||
-                              (checkTypeBackArray(currentObj[key||name]).length === 0 && keyres === '')
+                              (checkTypeBackArray(currentObj[key || name]).length === 0 && keyres === '')
 
                           })
                           return (
@@ -287,15 +382,18 @@ export const FormComponent: FC<BaseProps> = (props) => {
                       ：
                     </div>
                     <div className="antdpackaging_form_wrapper">
-                      {type === 'text' ? (key||name) : null}
+                      {type === 'text' ? (key || name) : null}
                       {type === 'input' ? (
                         <Input
                           className={classesForm}
                           size={size}
                           placeholder="请输入"
                           {...itemSecProps}
-                          onChange={e => {
+                          onChange={(e) => {
                             changeFun(e, itemSec);
+                            if (onChange) {
+                              onChange(e);
+                            }
                           }}
                         />
                       ) : null}
@@ -310,6 +408,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           value={(value)}
                           onChange={(e, opt) => {
                             changeFun(e, itemSec, opt);
+                            if (onChange) {
+                              onChange(e, opt);
+                            }
                           }}
                         >
                           {options &&
@@ -348,6 +449,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           value={value ? moment(value, dateFormat || dateFormatBase) : undefined}
                           onChange={e => {
                             changeFun(e, itemSec);
+                            if (onChange) {
+                              onChange(e);
+                            }
                           }}
                         />
                       ) : null}
@@ -368,6 +472,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           }
                           onChange={e => {
                             changeFun(e, itemSec);
+                            if (onChange) {
+                              onChange(e);
+                            }
                           }}
                         // placeholder="请选择日期"
                         />
@@ -380,6 +487,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           value={checkTypeBackArray(value)}
                           onChange={e => {
                             changeFun(e, itemSec);
+                            if (onChange) {
+                              onChange(e);
+                            }
                           }}
                         >
                           {options &&
@@ -413,6 +523,9 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           {...itemSecProps}
                           onChange={e => {
                             changeFun(e, itemSec);
+                            if (onChange) {
+                              onChange(e);
+                            }
                           }}
                           value={value}
                         >
@@ -440,6 +553,11 @@ export const FormComponent: FC<BaseProps> = (props) => {
                             })}
                         </Radio.Group>
                       ) : null}
+                      {
+                        (checkForm || checkFormItem) && currentObjTip[key || name] && currentObjTip[key || name].error ?
+                          <div className="antdpackaging_tip">{currentObjTip[key || name].message}</div>
+                          : null
+                      }
                     </div>
                   </div>
                 </div>
@@ -460,7 +578,8 @@ export const FormComponent: FC<BaseProps> = (props) => {
   )
 }
 FormComponent.defaultProps = {
-  size: 'middle'
+  size: 'middle',
+  checkForm: false
 }
 
 export default FormComponent;
