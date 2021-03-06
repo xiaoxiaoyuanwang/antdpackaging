@@ -193,6 +193,7 @@ function App() {
   return (
     <div className="App">
       <FormComponent
+        checkForm
         callBcak={(dt) => {
           callBcak(dt);
         }}

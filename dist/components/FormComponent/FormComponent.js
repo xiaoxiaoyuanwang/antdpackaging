@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle, useRef } from 'react';
 import { ConfigProvider, DatePicker, Input, Row, Col, Select, Checkbox, Radio, Tooltip as TooltipAnt, } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
@@ -40,21 +40,108 @@ var dateFormatBase = 'YYYY-MM-DD';
  * ~~~
  */
 export var FormComponent = function (props) {
-    var className = props.className, style = props.style, sourceList = props.sourceList, children = props.children, size = props.size, callBcak = props.callBcak, restProps = __rest(props, ["className", "style", "sourceList", "children", "size", "callBcak"]);
+    var className = props.className, style = props.style, sourceList = props.sourceList, children = props.children, size = props.size, cRef = props.cRef, checkForm = props.checkForm, callBcak = props.callBcak, restProps = __rest(props, ["className", "style", "sourceList", "children", "size", "cRef", "checkForm", "callBcak"]);
     var _a = useState({}), currentObj = _a[0], setObj = _a[1];
-    // const [currentDt, setDt] = useState<any>()
+    var _b = useState({}), currentObjTip = _b[0], setObjTip = _b[1];
+    var currentItem = useRef({});
     useEffect(function () {
         init(sourceList);
     }, []);
-    // useEffect(() => {
-    //   if (callBcak) {
-    //     callBcak(currentObj, currentDt);
-    //   }
-    // }, [currentObj]);
-    // 回调函数
-    function back(obj, item) {
+    // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+    useImperativeHandle(cRef, function () { return ({
+        // changeVal 就是暴露给父组件的方法
+        getInfo: function () {
+            checkRequired();
+            var errorTip = '';
+            for (var key in currentObjTip) {
+                if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
+                    var element = currentObjTip[key];
+                    if (element.error) {
+                        errorTip = element.message;
+                    }
+                }
+            }
+            return { data: currentObj, error: errorTip, currentItem: {} };
+        }
+    }); });
+    // 校验数据
+    function checkRequired() {
+        if (!sourceList) {
+            return;
+        }
+        var currentObjTips = JSON.parse(JSON.stringify(currentObjTip));
+        sourceList.forEach(function (itemOne) {
+            itemOne.forEach(function (itemSec) {
+                if (checkForm || itemSec.checkFormItem) {
+                    var tip = {
+                        error: false,
+                        message: ''
+                    };
+                    var element = itemSec.key || itemSec.name;
+                    var requiredBack = requiredItem(itemSec);
+                    if (itemSec.pattern) {
+                        if (!(itemSec.pattern).test(currentObj[element])) {
+                            tip.error = true;
+                            tip.message = itemSec.patternmsg || itemSec.message || "\u8BF7\u586B\u5199\u6B63\u786E\u683C\u5F0F\u7684" + itemSec.label;
+                        }
+                        else {
+                            tip.error = requiredBack.error;
+                            tip.message = requiredBack.message;
+                        }
+                    }
+                    else {
+                        tip.error = requiredBack.error;
+                        tip.message = requiredBack.message;
+                    }
+                    currentObjTips[element] = tip;
+                    setObjTip(currentObjTips);
+                }
+            });
+        });
+    }
+    function requiredItem(item) {
+        var element = item.key || item.name;
+        var ItemObj = {
+            error: false,
+            message: ''
+        };
+        if (item.must) {
+            if (currentObj[element] === '' ||
+                currentObj[element] === null ||
+                currentObj[element] === undefined ||
+                JSON.stringify(currentObj[element]) === '[]' ||
+                JSON.stringify(currentObj[element]) === '{}') {
+                ItemObj.error = true;
+                ItemObj.message = item.message || "\u8BF7\u586B\u5199" + item.label;
+            }
+            else {
+                ItemObj.error = false;
+                ItemObj.message = '';
+            }
+        }
+        return ItemObj;
+    }
+    useEffect(function () {
+        // 校验
+        checkRequired();
         if (callBcak) {
-            callBcak(obj, item);
+            back();
+        }
+    }, [currentObj]);
+    // 回调函数
+    function back() {
+        checkRequired();
+        var errorTip = '';
+        for (var key in currentObjTip) {
+            if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
+                var element = currentObjTip[key];
+                if (element.error) {
+                    errorTip = element.message;
+                }
+            }
+        }
+        if (callBcak) {
+            callBcak({ data: currentObj, error: errorTip, currentItem: currentItem.current });
         }
     }
     function changeFun(e, obj, opt) {
@@ -85,7 +172,8 @@ export var FormComponent = function (props) {
         }
         var currentObjNew = JSON.parse(JSON.stringify(currentObj));
         currentObjNew[obj.key || obj.name] = val;
-        back(currentObjNew, obj);
+        obj.value = val;
+        currentItem.current = obj;
         setObj(currentObjNew);
     }
     // 单选或多选选中
@@ -106,12 +194,15 @@ export var FormComponent = function (props) {
             else {
                 oldMultiple.push(value);
             }
+            oldMultiple = oldMultiple.filter(function (item) { return item != ''; });
             currentObjNew[obj.key || obj.name] = checkTypeBackArray(oldMultiple);
         }
         else {
             currentObjNew[obj.key || obj.name] = value;
         }
-        back(currentObjNew, obj);
+        obj.value = value;
+        currentItem.current = obj;
+        // back(currentObjNew, obj)
         setObj(currentObjNew);
     }
     // 初始化渲染
@@ -139,9 +230,9 @@ export var FormComponent = function (props) {
                 var _a, _b;
                 var optionsObj = itemSec.optionsObj, value = itemSec.value, type = itemSec.type, label = itemSec.label, must = itemSec.must, name = itemSec.name, key = itemSec.key, options = itemSec.options, colStyle = itemSec.colStyle, labelStyle = itemSec.labelStyle, styleWrapper = itemSec.styleWrapper, colClassName = itemSec.colClassName, labelClassName = itemSec.labelClassName, formClassName = itemSec.formClassName, md = itemSec.md, hint = itemSec.hint, hintText = itemSec.hintText, 
                 // disabledDate,
-                dateFormat = itemSec.dateFormat, 
+                dateFormat = itemSec.dateFormat, onChange = itemSec.onChange, checkFormItem = itemSec.checkFormItem, 
                 // disabledTime,
-                itemSecProps = __rest(itemSec, ["optionsObj", "value", "type", "label", "must", "name", "key", "options", "colStyle", "labelStyle", "styleWrapper", "colClassName", "labelClassName", "formClassName", "md", "hint", "hintText", "dateFormat"]);
+                itemSecProps = __rest(itemSec, ["optionsObj", "value", "type", "label", "must", "name", "key", "options", "colStyle", "labelStyle", "styleWrapper", "colClassName", "labelClassName", "formClassName", "md", "hint", "hintText", "dateFormat", "onChange", "checkFormItem"]);
                 var classesCol = classNames('antdpackaging_col', colClassName);
                 var classesLabel = classNames('antdpackaging_label', labelClassName, (_a = {},
                     _a["antdpackaging_size_" + size] = size,
@@ -195,9 +286,15 @@ export var FormComponent = function (props) {
                                 type === 'text' ? (key || name) : null,
                                 type === 'input' ? (React.createElement(Input, __assign({ className: classesForm, size: size, placeholder: "\u8BF7\u8F93\u5165" }, itemSecProps, { onChange: function (e) {
                                         changeFun(e, itemSec);
+                                        if (onChange) {
+                                            onChange(e);
+                                        }
                                     } }))) : null,
                                 type === 'select' ? (React.createElement(Select, __assign({ className: classesForm, size: size, getPopupContainer: function (triggerNode) { return triggerNode.parentNode; }, style: { width: '100%' }, placeholder: '请选择' }, itemSecProps, { value: (value), onChange: function (e, opt) {
                                         changeFun(e, itemSec, opt);
+                                        if (onChange) {
+                                            onChange(e, opt);
+                                        }
                                     } }), options &&
                                     options.map(function (itemOption, indexOption) {
                                         return (React.createElement(Select.Option, __assign({}, itemOption, { items: itemOption, value: optionsObj && optionsObj.value
@@ -210,6 +307,9 @@ export var FormComponent = function (props) {
                                     }))) : null,
                                 type === 'time' ? (React.createElement(DatePicker, __assign({ style: { width: '100%' }, className: classesForm, size: size, placeholder: "\u8BF7\u9009\u62E9\u65E5\u671F" }, itemSecProps, { value: value ? moment(value, dateFormat || dateFormatBase) : undefined, onChange: function (e) {
                                         changeFun(e, itemSec);
+                                        if (onChange) {
+                                            onChange(e);
+                                        }
                                     } }))) : null,
                                 type === 'timeRange' ? (React.createElement(RangePicker, __assign({ style: { width: '100%' }, className: classesForm }, itemSecProps, { value: value && value.length > 0
                                         ? [
@@ -218,9 +318,15 @@ export var FormComponent = function (props) {
                                         ]
                                         : null, onChange: function (e) {
                                         changeFun(e, itemSec);
+                                        if (onChange) {
+                                            onChange(e);
+                                        }
                                     } }))) : null,
                                 type === 'checkbox' ? (React.createElement(Checkbox.Group, __assign({ style: { width: '100%', textAlign: "left" }, className: classesForm }, itemSecProps, { value: checkTypeBackArray(value), onChange: function (e) {
                                         changeFun(e, itemSec);
+                                        if (onChange) {
+                                            onChange(e);
+                                        }
                                     } }), options &&
                                     options.map(function (itemOption, indexOption) {
                                         return (React.createElement(Checkbox, __assign({}, itemOption, { value: optionsObj && optionsObj.value
@@ -233,6 +339,9 @@ export var FormComponent = function (props) {
                                     }))) : null,
                                 type === 'radio' ? (React.createElement(Radio.Group, __assign({ style: { width: '100%', textAlign: "left" }, className: classesForm }, itemSecProps, { onChange: function (e) {
                                         changeFun(e, itemSec);
+                                        if (onChange) {
+                                            onChange(e);
+                                        }
                                     }, value: value }), options &&
                                     options.map(function (itemOption, indexOption) {
                                         return (React.createElement(Radio, __assign({}, itemOption, { value: optionsObj && optionsObj.value
@@ -242,7 +351,10 @@ export var FormComponent = function (props) {
                                                 : itemOption.value }), optionsObj && optionsObj.label
                                             ? itemOption[optionsObj.label]
                                             : itemOption.label));
-                                    }))) : null)))));
+                                    }))) : null,
+                                (checkForm || checkFormItem) && currentObjTip[key || name] && currentObjTip[key || name].error ?
+                                    React.createElement("div", { className: "antdpackaging_tip" }, currentObjTip[key || name].message)
+                                    : null)))));
             })));
         });
     };
@@ -251,6 +363,7 @@ export var FormComponent = function (props) {
         React.createElement("div", { className: classes }, initHtml(sourceList))));
 };
 FormComponent.defaultProps = {
-    size: 'middle'
+    size: 'middle',
+    checkForm: false
 };
 export default FormComponent;
