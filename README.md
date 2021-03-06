@@ -258,6 +258,7 @@ function App() {
   // }, [currentObj]);
   const callBcak = (dt) => {
     // setItem(item)
+    // dt.data请写在state里面，不然页面不会重新渲染
     setObj(dt.data);
     query(dt);
   };
