@@ -4,11 +4,42 @@
 
 ```bash
 
-新增表单验证以及正则表达，示例：
+对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
+支持多种input、select、time方法，请参考antd
+
+```
+```bash
+
+新增表单验证以及正则表达，如果不需要表单验证，可以不用checkForm、cRef，示例：
+
+```
+```javascript
+// 不需要表单验证
+  <FormComponent
+    callBcak={(dt, item) => {
+      callBcak(dt, item);
+    }}
+    sourceList={sourceList}
+  />
 
 ```
 
 ```javascript
+// class用法
+  <FormComponent
+    checkForm
+    callBcak={(dt, item) => {
+      callBcak(dt, item);
+    }}
+    sourceList={sourceList}
+    cRef={(childRef)=>this.childRef = childRef}
+  />
+
+```
+
+```javascript
+// HOOK用法
+// const childRef = useRef(null);
 
   <FormComponent
     checkForm
@@ -18,13 +49,6 @@
     sourceList={sourceList}
     cRef={childRef}
   />
-
-```
-
-```bash
-
-对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
-支持多种input、select、time方法，请参考antd
 
 ```
 
@@ -151,10 +175,6 @@ function App() {
         type: "select",
         label: "Area",
         must: true,
-        showSearch: true,
-        onSearch: (e) => {
-          console.log(e);
-        },
         options: QuickSearch,
         value: currentObj.Area,
         name: "Area",
