@@ -4,7 +4,9 @@
 
 
 ```bash
-
+```javascript
+<b>v0.2.1</b>
+```
 修复input无法设置默认值问题
 
 ```
