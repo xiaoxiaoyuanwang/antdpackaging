@@ -4,19 +4,16 @@
 
 
 ```bash
-```javascript
-<b>v0.2.1</b>
-```
-修复input无法设置默认值问题
-
-```
-
-```bash
 
 对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
 支持多种input、select、time方法，请参考antd
 
 ```
+<b>v0.2.1</b>
+```bash
+修复input无法设置默认值问题
+```
+<b>v0.2.0</b>
 ```bash
 
 新增表单验证以及正则表达，如果不需要表单验证，可以不用checkForm、cRef，示例：
