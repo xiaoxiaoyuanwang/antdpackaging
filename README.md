@@ -2,9 +2,10 @@
 
 ## 使用 React+typescript 的组件库
 
+
 ```bash
-//启动本地环境 - 开发测试
-npm run stroybook 或 npm start
+
+修复input无法设置默认值问题
 
 ```
 
