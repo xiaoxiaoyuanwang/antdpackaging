@@ -284,7 +284,7 @@ export var FormComponent = function (props) {
                                 "\uFF1A"),
                             React.createElement("div", { className: "antdpackaging_form_wrapper" },
                                 type === 'text' ? (key || name) : null,
-                                type === 'input' ? (React.createElement(Input, __assign({ className: classesForm, size: size, placeholder: "\u8BF7\u8F93\u5165" }, itemSecProps, { onChange: function (e) {
+                                type === 'input' ? (React.createElement(Input, __assign({ className: classesForm, size: size, placeholder: "\u8BF7\u8F93\u5165" }, itemSecProps, { value: (value), onChange: function (e) {
                                         changeFun(e, itemSec);
                                         if (onChange) {
                                             onChange(e);
