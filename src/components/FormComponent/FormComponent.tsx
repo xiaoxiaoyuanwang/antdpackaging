@@ -446,6 +446,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                           size={size}
                           placeholder="请输入"
                           {...itemSecProps}
+                          value={(value)}
                           onChange={(e) => {
                             changeFun(e, itemSec);
                             if (onChange) {
