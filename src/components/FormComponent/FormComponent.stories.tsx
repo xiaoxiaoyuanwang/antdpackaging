@@ -1,52 +1,18 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button } from 'antd'
 import { storiesOf } from '@storybook/react'
 import FormComponent from './FormComponent'
-import FormComponentItem from './FormComponentItem'
-import { disabledStartDt } from '../../utils/utils'
-export interface FormProps {
-  name: string;
-  names: string[];
-  Username: string;
-  AreaLabel: string[];
-  Area: any;
-  time: string;
-  timeRange: string[];
-  checkbox: string[];
-  radio: string;
-}
-export type DataSourceType<T = {}> = T & FormProps
 const defaultFormComponent = () => {
-  const childRef = useRef({});
-  const [ currentObj, setObj ] = useState<DataSourceType>({
-    name: '',
-    names: ['Jack-value', 'Lucy-value'],
-    Username: '',
-    AreaLabel: ['shanghai'],
-    Area: '',
-    time: '',
+  const childRef = useRef();
+  const [currentObj, setObj] = useState({
+    Username: "uu",
+    AreaLabel: ["shanghai"],
+    Area: "",
+    time: "",
     timeRange: [],
-    checkbox: ['beijing', 'shanghai'],
-    radio: '北京',
+    checkbox: ["beijing", "shanghai"],
+    radio: "",
   });
-  let QuickSearchTypeDic = [
-    {
-      value: "",
-      label: "所有",
-    },
-    {
-      value: "Jack-value",
-      label: "Jack",
-    },
-    {
-      value: "Lucy-value",
-      label: "Lucy",
-    },
-    {
-      value: "Tom-value",
-      label: "Tom",
-    },
-  ];
   let QuickSearch = [
     {
       key: "beijing",
@@ -62,30 +28,6 @@ const defaultFormComponent = () => {
   ];
   let sourceList = [
     [
-      // 多选
-      {
-        type: "statusMultiple",
-        md: 24,
-        label: "多选",
-        value: currentObj.names,
-        name: "names",
-        query: true,
-        options: QuickSearchTypeDic,
-      },
-    ],
-    [
-      // 单选
-      {
-        type: "status",
-        md: 24,
-        label: "单选",
-        value: currentObj.name,
-        name: "name",
-        query: true,
-        options: QuickSearchTypeDic,
-      },
-    ],
-    [
       {
         type: "input",
         addonBefore: "http://",
@@ -95,9 +37,8 @@ const defaultFormComponent = () => {
         label: "Username",
         pattern: /^[0-9]*$/,
         patternmsg: "请输入数字",
-        value: currentObj.Username,
         name: "Username",
-        onChange: (e:any) => {
+        onChange: (e: any) => {
           console.log("onChange", e);
         },
       },
@@ -108,7 +49,6 @@ const defaultFormComponent = () => {
         mode: "multiple",
         options: QuickSearch,
         optionsObj: { label: "key", value: "key" },
-        value: currentObj.AreaLabel,
         name: "AreaLabel",
       },
       {
@@ -116,11 +56,10 @@ const defaultFormComponent = () => {
         label: "Area",
         must: true,
         showSearch: true,
-        onSearch: (e:any) => {
+        onSearch: (e: any) => {
           console.log(e);
         },
         options: QuickSearch,
-        value: currentObj.Area,
         name: "Area",
       },
     ],
@@ -128,21 +67,17 @@ const defaultFormComponent = () => {
       {
         type: "time",
         label: "time",
-        value: currentObj.time,
         name: "time",
-        disabledDate: (e:any) => {
+        rules: [{ required: true }],
+        disabledDate: (e: any) => {
           // 自定义方法
-          return disabledStartDt(e, '', '',true)
+          // return disabledStartDt(e, '', '',true)
         },
       },
       {
         type: "timeRange",
-        md: 16,
         label: "timeRange",
-        value: currentObj.timeRange,
         name: "timeRange",
-        showTime: true,
-        dateFormat: "YYYY-MM-DD HH:mm:ss",
       },
     ],
     [
@@ -151,14 +86,12 @@ const defaultFormComponent = () => {
         label: "checkbox",
         options: QuickSearch,
         optionsObj: { label: "value", value: "key" },
-        value: currentObj.checkbox,
         name: "checkbox",
       },
       {
         type: "radio",
         label: "radio",
         options: QuickSearch,
-        value: currentObj.radio,
         name: "radio",
       },
       {
@@ -178,35 +111,39 @@ const defaultFormComponent = () => {
       },
     ],
   ];
-  const query = (dt?:any) => {
-    if (dt) {
-      // 点击后立即获取数据
-      if (dt.currentItem && dt.currentItem.query) {
-        console.log("点击后立即获取数据", dt);
-      }
-    } else {
-      // let data = childRef.current&&childRef.current.getInfo();
-      // if (data.error) {
-      //   console.log("请填写完整的数据", data);
-      // }
-      // 点击获取数据按钮后获取数据
-      console.log("点击查询按钮后获取数据", currentObj);
+
+  const query = () => {
+    console.log(childRef.current);
+    if (childRef.current) {
+      // childRef.current.form.validateFields()
+      //   .then((values:any) => {
+      //     console.log(values);
+
+      //   })
+      //   .catch((errorInfo:any) => {
+      //     console.log(errorInfo);
+      //   })
     }
   };
-  const callBcak = (dt:any) => {
-    setObj(dt.data);
-    query(dt);
-  };
+  useEffect(() => {
+    console.log(childRef.current);
+
+    setTimeout(() => {
+      if (childRef.current) {
+        // childRef.current.form.setFieldsValue({ 
+        //   Username: currentObj.Username,
+        //   AreaLabel: currentObj.AreaLabel,
+        //   radio: currentObj.radio,
+        //   checkbox: currentObj.checkbox,
+        //  });
+      }
+    }, 100)
+  }, []);
   return <>
     <FormComponent
-        checkForm
-        callBcak={(dt) => {
-          callBcak(dt);
-        }}
-        sourceList={sourceList}
-        cRef={childRef}
-      />
-    <FormComponentItem />
+      sourceList={sourceList}
+      cRef={childRef}
+    />
   </>
 }
 storiesOf('FormComponent Component', module)

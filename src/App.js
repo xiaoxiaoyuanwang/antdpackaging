@@ -1,13 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "antd";
 import FormComponent from "./components/FormComponent";
 
 function App() {
   const childRef = useRef(null);
   const [currentObj, setObj] = useState({
-    name: "",
-    names: ["Jack-value"],
-    Username: "",
+    Username: "uu",
     AreaLabel: ["shanghai"],
     Area: "",
     time: "",
@@ -15,24 +13,6 @@ function App() {
     checkbox: ["beijing", "shanghai"],
     radio: "",
   });
-  let QuickSearchTypeDic = [
-    {
-      value: "",
-      label: "所有",
-    },
-    {
-      value: "Jack-value",
-      label: "Jack",
-    },
-    {
-      value: "Lucy-value",
-      label: "Lucy",
-    },
-    {
-      value: "Tom-value",
-      label: "Tom",
-    },
-  ];
   let QuickSearch = [
     {
       key: "beijing",
@@ -48,40 +28,12 @@ function App() {
   ];
   let sourceList = [
     [
-      // 多选
-      {
-        type: "statusMultiple",
-        md: 24,
-        label: "多选",
-        value: currentObj.names,
-        name: "names",
-        query: true,
-        options: QuickSearchTypeDic,
-      },
-    ],
-    [
-      // 单选
-      {
-        type: "status",
-        md: 24,
-        label: "单选",
-        value: currentObj.name,
-        name: "name",
-        query: true,
-        options: QuickSearchTypeDic,
-      },
-    ],
-    [
       {
         type: "input",
         addonBefore: "http://",
-        must: true,
-        hint: true,
-        hintText: "友情提示",
         label: "Username",
         pattern: /^[0-9]*$/,
-        patternmsg: "请输入数字",
-        value: currentObj.Username,
+        rules:[{ required: true }],
         name: "Username",
         onChange: (e) => {
           console.log("onChange", e);
@@ -90,23 +42,21 @@ function App() {
       {
         type: "select",
         label: "AreaLabel",
-        must: true,
         mode: "multiple",
         options: QuickSearch,
+        rules:[{ required: true }],
         optionsObj: { label: "key", value: "key" },
-        value: currentObj.AreaLabel,
         name: "AreaLabel",
       },
       {
         type: "select",
         label: "Area",
-        must: true,
         showSearch: true,
         onSearch: (e) => {
           console.log(e);
         },
+        rules:[{ required: true }],
         options: QuickSearch,
-        value: currentObj.Area,
         name: "Area",
       },
     ],
@@ -114,21 +64,14 @@ function App() {
       {
         type: "time",
         label: "time",
-        value: currentObj.time,
         name: "time",
-        disabledDate: (e) => {
-          // 自定义方法
-          // return disabledStartDt(e, '', '',true)
-        },
+        rules:[{ required: true }],
       },
       {
         type: "timeRange",
-        md: 16,
         label: "timeRange",
-        value: currentObj.timeRange,
         name: "timeRange",
-        showTime: true,
-        dateFormat: "YYYY-MM-DD HH:mm:ss",
+        rules:[{ required: true }],
       },
     ],
     [
@@ -137,15 +80,15 @@ function App() {
         label: "checkbox",
         options: QuickSearch,
         optionsObj: { label: "value", value: "key" },
-        value: currentObj.checkbox,
         name: "checkbox",
+        rules:[{ required: true }],
       },
       {
         type: "radio",
         label: "radio",
         options: QuickSearch,
-        value: currentObj.radio,
         name: "radio",
+        rules:[{ required: true }],
       },
       {
         type: "buttons",
@@ -164,39 +107,34 @@ function App() {
       },
     ],
   ];
+ 
+  const query = () => {
 
-  const query = (dt) => {
-    if (dt) {
-      // 点击后立即获取数据
-      if (dt.currentItem && dt.currentItem.query) {
-        console.log("点击后立即获取数据", dt);
-      }
-    } else {
-      let data = childRef.current.getInfo();
-      if (data.error) {
-        console.log("请填写完整的数据", data);
-      }
-      // 点击获取数据按钮后获取数据
-      console.log("点击查询按钮后获取数据", currentObj);
-    }
+    childRef.current.form.validateFields()
+      .then(values => {
+        console.log(values);
+        
+      })
+      .catch(errorInfo => {
+        console.log(errorInfo);
+      })
   };
-  // useEffect(() => {
-  //   if (currentItem && currentItem.query) {
-  //     query()
-  //   }
-  // }, [currentObj]);
-  const callBcak = (dt) => {
-    // setItem(item)
-    setObj(dt.data);
-    query(dt);
-  };
+  useEffect(() => {
+    // 设置默认值
+    setTimeout(()=>{
+      if (childRef.current) {
+        childRef.current.form.setFieldsValue({ 
+          Username: currentObj.Username,
+          AreaLabel: currentObj.AreaLabel,
+          radio: currentObj.radio,
+          checkbox: currentObj.checkbox,
+         });
+      }
+    }, 100)
+  }, []);
   return (
     <div className="App">
       <FormComponent
-        checkForm
-        callBcak={(dt) => {
-          callBcak(dt);
-        }}
         sourceList={sourceList}
         cRef={childRef}
       />

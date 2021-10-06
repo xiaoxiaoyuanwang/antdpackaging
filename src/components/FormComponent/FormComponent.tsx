@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useImperativeHandle, useRef } from 'react'
+import React, { useImperativeHandle } from 'react'
 import {
   ConfigProvider,
   DatePicker,
@@ -8,95 +8,14 @@ import {
   Select,
   Checkbox,
   Radio,
-  Tooltip as TooltipAnt,
+  Form
 } from 'antd';
-import {
-  QuestionCircleOutlined
-} from '@ant-design/icons';
 import classNames from 'classnames'
 import moment from 'moment'
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
-import { checkTypeBackArray } from '../../utils/utils'
 moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
-const dateFormatBase = 'YYYY-MM-DD'
-
-export type SizeType = 'small' | 'middle' | 'large' | undefined;
-export interface FormComponentItemProps extends Omit<React.AriaAttributes, ''> {
-  /**设置 表单类型 status、statusMultiple、input、time、timeRange、text、select、buttons、checkbox、radio */
-  type?: string;
-  /**设置 label名称 */
-  label?: string;
-  /**设置 返回主键值， 当type为text、buttons时返回传入值*/
-  name?: any;
-  /**设置 默认回显值格式statusMultiple、checkbox: ['value1', 'value2'];timeRange: ['2021-02-12','2021-02-13']*/
-  value?: string;
-  /**设置 是否必填*/
-  must?: boolean;
-  /**设置 表单校验*/
-  checkFormItem?: boolean;
-  /**设置 表单校验提示信息*/
-  message?: string;
-  /**设置 每行的col className */
-  colClassName?: string;
-  /**设置 form的className*/
-  formClassName?: string;
-  /**设置 labelClassName的className*/
-  labelClassName?: string;
-  /**设置 type为select、checkbox、radio、status、statusMultiple时的选项，
-   * 格式[{label: '中国', value: '中国'}],选择返回value值
-   * checkbox、radio格式[{label: '中国', value: '中国', disabled: true}]
-   * 禁止某项
-   */
-  options?: object[];
-  /**设置 Select 的模式为多选或标签*/
-  mode?: 'multiple' | 'tags' | undefined;
-  /**设置 type为select、checkbox、radio、status、statusMultiple时的选项显示和返回字段，如果options的格式不是[{label: '中国', value: '中国'}]，
-   * 可以通过optionsObj实现，如[{key: '中国', value: '中国'}],设置optionsObj:{label:'label',value:'key'}
-   * 选择返回key值
-  */
-  optionsObj?: { value: string, label: string };
-  /**设置 type为time、timeRange的时间格式*/
-  dateFormat?: string;
-  /**设置 placeholder*/
-  placeholder?: string;
-  /**设置 值改变后是否立即查询，需在回调callBcak中判断*/
-  query?: boolean;
-  /**设置 正则表达式*/
-  pattern?: string;
-  /**设置 正则表达式提示信息*/
-  patternmsg?: string;
-  /**设置 是否有hint*/
-  hint?: boolean;
-  /**设置 是否有hint内容*/
-  hintText?: React.ReactNode;
-  /**设置 没一列占的宽度，参考antd的col*/
-  md?: number;
-  /**设置 每行的col 样式，如colStyle:{padding: 0}*/
-  colStyle?: React.CSSProperties;
-  /**设置 每行的label 样式，如labelStyle:{padding: 0}*/
-  labelStyle?: React.CSSProperties;
-  /**设置 type为status、statusMultiple的容器样式*/
-  styleWrapper?: React.CSSProperties;
-  onChange?: (e: any, opt?: any) => void;
-}
-export type DataSourceType<T = {}> = T & FormComponentItemProps
-export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'type'> {
-  /**设置 数据源 */
-  sourceList: object[],
-  /**设置 容器的className */
-  className?: string;
-  /**设置 每行的style */
-  style?: React.CSSProperties;
-  /**设置 回调函数,参数一为当前表单的数据,参数二为当前行的传入数据 */
-  callBcak?: (backData: any, item?: any) => void;
-  /**设置 每一行表单的大小 */
-  size?: 'small' | 'middle' | 'large' | undefined;
-  cRef?: any;
-  /**设置是否需要表单校验 */
-  checkForm?: boolean;
-}
 /**
  * 页面中最常用的的元素，适合于完成特定的交互
  * ### 引用方法
@@ -105,188 +24,144 @@ export interface BaseProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
  * import { FormComponent } from 'antdpackaging'
  * ~~~
  */
-export const FormComponent: FC<BaseProps> = (props) => {
+const FormComponent = (props: any) => {
   const {
     className,
-    style,
     sourceList,
-    children,
-    size,
-    cRef,
-    checkForm,
-    callBcak,
-    ...restProps
+    cRef
   } = props
-  const [currentObj, setObj] = useState({});
-  const [currentObjTip, setObjTip] = useState({});
-  let currentItem = useRef({})
-  useEffect(() => {
-    init(sourceList);
-  }, []);
+  const [form] = Form.useForm();
   // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
   useImperativeHandle(cRef, () => ({
     // changeVal 就是暴露给父组件的方法
-    getInfo: () => {
-      checkRequired()
-      let errorTip: string = ''
-      for (const key in currentObjTip) {
-        if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
-          const element = currentObjTip[key];
-          if (element.error) {
-            errorTip = element.message
-          }
-        }
-      }
-      return { data: currentObj, error: errorTip, currentItem: {} }
-    }
+    form: form,
   }))
-  // 校验数据
-  function checkRequired() {
-    if (!sourceList) {
-      return;
-    }
-    const currentObjTips = JSON.parse(JSON.stringify(currentObjTip))
-    sourceList.forEach((itemOne: any) => {
-      itemOne.forEach((itemSec: any) => {
-        if (checkForm || itemSec.checkFormItem) {
-          const tip = {
-            error: false,
-            message: ''
-          }
-          const element = itemSec.key || itemSec.name
-          let requiredBack = requiredItem(itemSec)
-          if (itemSec.pattern) {
-            if (!(itemSec.pattern).test(currentObj[element])) {
-              tip.error = true
-              tip.message = itemSec.patternmsg || itemSec.message || `请填写正确格式的${itemSec.label}`
-            } else {
-              tip.error = requiredBack.error
-              tip.message = requiredBack.message
-            }
-          } else {
-            tip.error = requiredBack.error
-            tip.message = requiredBack.message
-          }
-          currentObjTips[element] = tip
-          setObjTip(currentObjTips)
-        }
-      });
-    });
-  }
-  function requiredItem(item: any) {
-    const element = item.key || item.name
-    let ItemObj = {
-      error: false,
-      message: ''
-    }
-    if (item.must) {
-      if (currentObj[element] === '' ||
-        currentObj[element] === null ||
-        currentObj[element] === undefined ||
-        JSON.stringify(currentObj[element]) === '[]' ||
-        JSON.stringify(currentObj[element]) === '{}'
-      ) {
-        ItemObj.error = true
-        ItemObj.message = item.message || `请填写${item.label}`
-      } else {
-        ItemObj.error = false
-        ItemObj.message = ''
-      }
-    }
-    return ItemObj
-  }
-  useEffect(() => {
-    // 校验
-    checkRequired()
-    if (callBcak) {
-      back()
-    }
-  }, [currentObj]);
-  // 回调函数
-  function back() {
-    checkRequired()
-    let errorTip: string = ''
-    for (const key in currentObjTip) {
-      if (Object.prototype.hasOwnProperty.call(currentObjTip, key)) {
-        const element = currentObjTip[key];
-        if (element.error) {
-          errorTip = element.message
-        }
-      }
-    }
-    if (callBcak) {
-      callBcak({ data: currentObj, error: errorTip, currentItem: currentItem.current })
-    }
-  }
-  function changeFun(e: any, obj: any, opt?: any) {
-    let val: any;
-    if (obj.type === 'time') {
-      val = moment(e).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(e).format(obj.dateFormat || dateFormatBase);
-    } else if (obj.type === 'timeRange') {
-      try {
-        if (e && e.length > 0) {
-          let arg0 = e[0];
-          let arg1 = e[1];
-          val = [
-            moment(arg0).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(arg0).format(obj.dateFormat || dateFormatBase),
-            moment(arg1).format(obj.dateFormat || dateFormatBase) === 'Invalid date' ? '' : moment(arg1).format(obj.dateFormat || dateFormatBase),
-          ];
-        } else {
-          val = [];
-        }
-      } catch (error) {
-        val = []
-      }
-    } else {
-      val = e && e.target ? e.target.value : e;
-    }
-    let currentObjNew = JSON.parse(JSON.stringify(currentObj))
-    currentObjNew[obj.key || obj.name] = val
-    obj.value = val
-    currentItem.current = obj
-    setObj(currentObjNew)
-  }
-  // 单选或多选选中
-  function styleStatus(value: string | number, obj: any) {
-    let currentObjNew = JSON.parse(JSON.stringify(currentObj))
+  // 选择表单类型
+  const initItems = (itemSec: any) => {
+    const {
+      optionsObj,
+      type,
+      name,
+      options,
+      ...itemSecProps
+    } = itemSec
+    let strDom = null
+    switch (type) {
+      case 'text':
+        strDom = name;
+        break;
 
-    if (obj.type === 'statusMultiple') {
-      let oldMultiple = currentObj[obj.key || obj.name] ? JSON.parse(JSON.stringify(currentObj[obj.key || obj.name])) : '';
-      if (!value) {
-        oldMultiple = [];
-      } else {
-        oldMultiple = checkTypeBackArray(oldMultiple);
-        oldMultiple = oldMultiple.filter((item: string | number) => item !== -1);
-      }
-      if (oldMultiple.indexOf(value) > -1) {
-        oldMultiple = oldMultiple.filter((item: string | number) => item !== value);
-      } else {
-        oldMultiple.push(value);
-      }
-      oldMultiple = oldMultiple.filter((item: string | number) => item != '')
-      currentObjNew[obj.key || obj.name] = checkTypeBackArray(oldMultiple)
-    } else {
-      currentObjNew[obj.key || obj.name] = value
+      case 'input':
+        strDom = <Input
+          placeholder="请输入"
+          {...itemSecProps}
+        />;
+        break;
+      case 'select':
+        strDom = <Select
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          placeholder={'请选择'}
+          {...itemSecProps}
+        >
+          {options &&
+            options.map((itemOption: any, indexOption: number) => {
+              return (
+                <Select.Option
+                  {...itemOption}
+                  items={itemOption}
+                  value={
+                    optionsObj && optionsObj.value
+                      ? `${itemOption[optionsObj.value]}`
+                      : `${itemOption.value}`
+                  }
+                  key={
+                    optionsObj && optionsObj.value
+                      ? itemOption[optionsObj.value]
+                      : itemOption.value
+                  }
+                >
+                  {optionsObj && optionsObj.label
+                    ? itemOption[optionsObj.label]
+                    : itemOption.label}
+                </Select.Option>
+              );
+            })}
+        </Select>;
+        break;
+      case 'time':
+        strDom = <DatePicker
+          style={{ width: '100%' }}
+          placeholder="请选择日期"
+          {...itemSecProps}
+        />;
+        break;
+      case 'timeRange':
+        strDom = <RangePicker
+          style={{ width: '100%' }}
+          {...itemSecProps}
+        />;
+        break;
+      case 'checkbox':
+        strDom = <Checkbox.Group
+          {...itemSecProps}
+        >
+          {options &&
+            options.map((itemOption: any, indexOption: number) => {
+              return (
+                <Checkbox
+                  {...itemOption}
+                  value={
+                    optionsObj && optionsObj.value
+                      ? `${itemOption[optionsObj.value]}`
+                      : `${itemOption.value}`
+                  }
+                  key={
+                    optionsObj && optionsObj.value
+                      ? itemOption[optionsObj.value]
+                      : itemOption.value
+                  }
+                >
+                  {optionsObj && optionsObj.label
+                    ? itemOption[optionsObj.label]
+                    : itemOption.label}
+                </Checkbox>
+              );
+            })}
+        </Checkbox.Group>;
+        break;
+      case 'radio':
+        strDom = <Radio.Group
+          {...itemSecProps}
+        >
+          {options &&
+            options.map((itemOption: any, indexOption: number) => {
+              return (
+                <Radio
+                  {...itemOption}
+                  value={
+                    optionsObj && optionsObj.value
+                      ? `${itemOption[optionsObj.value]}`
+                      : `${itemOption.value}`
+                  }
+                  key={
+                    optionsObj && optionsObj.value
+                      ? itemOption[optionsObj.value]
+                      : itemOption.value
+                  }
+                >
+                  {optionsObj && optionsObj.label
+                    ? itemOption[optionsObj.label]
+                    : itemOption.label}
+                </Radio>
+              );
+            })}
+        </Radio.Group>;
+        break;
+      default:
+        strDom = null;
+        break;
     }
-    obj.value = value
-    currentItem.current = obj
-    // back(currentObjNew, obj)
-    setObj(currentObjNew);
-  }
-  // 初始化渲染
-  function init(data: object[]) {
-    if (!data) {
-      return;
-    }
-    let obj = JSON.parse(JSON.stringify(currentObj))
-    data.forEach((itemOne: any) => {
-      itemOne.forEach((itemSec: any) => {
-        if (itemSec.type !== 'text' && itemSec.type !== 'buttons') {
-          obj[itemSec.key || itemSec.name] = itemSec.value
-        }
-      });
-    });
-    setObj(obj)
+    return strDom;
   }
   const initHtml = (data: object[]) => {
     if (!data) {
@@ -298,38 +173,13 @@ export const FormComponent: FC<BaseProps> = (props) => {
         <Row key={indexOne} className={classesRow}>
           {itemOne.map((itemSec: any, indexSec: number) => {
             const {
-              optionsObj,
-              value,
               type,
-              label,
-              must,
               name,
-              key,
-              options,
               colStyle,
-              labelStyle,
-              styleWrapper,
               colClassName,
-              labelClassName,
-              formClassName,
               md,
-              hint,
-              hintText,
-              // disabledDate,
-              dateFormat,
-              onChange,
-              checkFormItem,
-              // disabledTime,
-              ...itemSecProps
             } = itemSec
             const classesCol = classNames('antdpackaging_col', colClassName)
-            const classesLabel = classNames('antdpackaging_label', labelClassName, {
-              [`antdpackaging_size_${size}`]: size
-            })
-            const classesStatus = classNames('antdpackaging_status', labelClassName, {
-              [`antdpackaging_status_${size}`]: size
-            })
-            const classesForm = classNames(formClassName)
             if (type === 'buttons') {
               return (
                 <Col
@@ -341,69 +191,7 @@ export const FormComponent: FC<BaseProps> = (props) => {
                     ...colStyle
                   }}
                 >
-                  {key || name}
-                </Col>
-              );
-            }
-            if (type === 'status' || type === 'statusMultiple') {
-              return (
-                <Col
-                  md={md || 24}
-                  sm={24}
-                  key={indexSec}
-                  className={classNames('antdpackaging_status_col', classesCol)}
-                  style={{
-                    ...colStyle
-                  }}
-                >
-                  <div
-                    className='antdpackaging_status_wrapper'
-                    style={{ ...styleWrapper }}
-                  >
-                    <div
-                      className={classesStatus}
-                      style={{
-                        ...labelStyle,
-                      }}
-                    >
-                      {
-                        must ?
-                          <span style={{ color: 'red' }}>*</span>
-                          : null
-                      }
-                      {label}
-                    </div>
-                    <div style={{ flex: 1, textAlign: 'left' }}>
-                      {options &&
-                        options.map((itemOption: any, indexOption: number) => {
-                          const keyres = optionsObj && optionsObj.value
-                            ? itemOption[optionsObj.value]
-                            : itemOption.value
-                          const valres = optionsObj && optionsObj.label
-                            ? itemOption[optionsObj.label]
-                            : itemOption.label
-                          const classesStatusItem = classNames('antdpackaging_status_item unSelButton', itemSec.formClassName, {
-                            [`antdpackaging_status_item_${size}`]: size,
-                            "selButton": checkTypeBackArray(currentObj[key || name]).indexOf(
-                              (keyres).toString()
-                            ) > -1 ||
-                              (checkTypeBackArray(currentObj[key || name]).length === 0 && keyres === '')
-
-                          })
-                          return (
-                            <div
-                              onClick={() => {
-                                styleStatus(keyres, itemSec);
-                              }}
-                              key={indexOption}
-                              className={classesStatusItem}
-                            >
-                              {valres}
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
+                  {name}
                 </Col>
               );
             }
@@ -417,208 +205,11 @@ export const FormComponent: FC<BaseProps> = (props) => {
                   ...colStyle
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', }}>
-                    <div
-                      className={classesLabel}
-                      style={{
-                        ...labelStyle,
-                      }}
-                    >
-                      {
-                        must ?
-                          <span style={{ color: 'red' }}>*</span>
-                          : null
-                      }
-                      {label}
-                      {hint ? (
-                        <TooltipAnt placement="top" title={() => <div>{hintText}</div>}>
-                          <QuestionCircleOutlined className='antdpackaging_hint' />
-                        </TooltipAnt>
-                      ) : null}
-                      ：
-                    </div>
-                    <div className="antdpackaging_form_wrapper">
-                      {type === 'text' ? (key || name) : null}
-                      {type === 'input' ? (
-                        <Input
-                          className={classesForm}
-                          size={size}
-                          placeholder="请输入"
-                          {...itemSecProps}
-                          value={(value)}
-                          onChange={(e) => {
-                            changeFun(e, itemSec);
-                            if (onChange) {
-                              onChange(e);
-                            }
-                          }}
-                        />
-                      ) : null}
-                      {type === 'select' ? (
-                        <Select
-                          className={classesForm}
-                          size={size}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          style={{ width: '100%' }}
-                          placeholder={'请选择'}
-                          {...itemSecProps}
-                          value={(value)}
-                          onChange={(e, opt) => {
-                            changeFun(e, itemSec, opt);
-                            if (onChange) {
-                              onChange(e, opt);
-                            }
-                          }}
-                        >
-                          {options &&
-                            options.map((itemOption: any, indexOption: number) => {
-                              return (
-                                <Select.Option
-                                  {...itemOption}
-                                  items={itemOption}
-                                  value={
-                                    optionsObj && optionsObj.value
-                                      ? `${itemOption[optionsObj.value]}`
-                                      : `${itemOption.value}`
-                                  }
-                                  key={
-                                    optionsObj && optionsObj.value
-                                      ? itemOption[optionsObj.value]
-                                      : itemOption.value
-                                  }
-                                >
-                                  {optionsObj && optionsObj.label
-                                    ? itemOption[optionsObj.label]
-                                    : itemOption.label}
-                                </Select.Option>
-                              );
-                            })}
-                        </Select>
-                      ) : null}
-                      {type === 'time' ? (
-                        <DatePicker
-                          style={{ width: '100%' }}
-                          className={classesForm}
-                          size={size}
-                          placeholder="请选择日期"
-                          // disabledDate={(e) => { return disabledDate ? disabledDate(e) : null }}
-                          {...itemSecProps}
-                          value={value ? moment(value, dateFormat || dateFormatBase) : undefined}
-                          onChange={e => {
-                            changeFun(e, itemSec);
-                            if (onChange) {
-                              onChange(e);
-                            }
-                          }}
-                        />
-                      ) : null}
-                      {type === 'timeRange' ? (
-                        <RangePicker
-                          style={{ width: '100%' }}
-                          className={classesForm}
-                          // disabledDate={(e) => { return disabledDate ? disabledDate(e) : null }}
-                          // disabledTime={(_, type) => { return disabledTime ? disabledTime(_, type) : null }}
-                          {...itemSecProps}
-                          value={
-                            value && value.length > 0
-                              ? [
-                                moment(value[0], dateFormat || dateFormatBase),
-                                moment(value[1], dateFormat || dateFormatBase)
-                              ]
-                              : null
-                          }
-                          onChange={e => {
-                            changeFun(e, itemSec);
-                            if (onChange) {
-                              onChange(e);
-                            }
-                          }}
-                        // placeholder="请选择日期"
-                        />
-                      ) : null}
-                      {type === 'checkbox' ? (
-                        <Checkbox.Group
-                          style={{ width: '100%', textAlign: "left" }}
-                          className={classesForm}
-                          {...itemSecProps}
-                          value={checkTypeBackArray(value)}
-                          onChange={e => {
-                            changeFun(e, itemSec);
-                            if (onChange) {
-                              onChange(e);
-                            }
-                          }}
-                        >
-                          {options &&
-                            options.map((itemOption: any, indexOption: number) => {
-                              return (
-                                <Checkbox
-                                  {...itemOption}
-                                  value={
-                                    optionsObj && optionsObj.value
-                                      ? `${itemOption[optionsObj.value]}`
-                                      : `${itemOption.value}`
-                                  }
-                                  key={
-                                    optionsObj && optionsObj.value
-                                      ? itemOption[optionsObj.value]
-                                      : itemOption.value
-                                  }
-                                >
-                                  {optionsObj && optionsObj.label
-                                    ? itemOption[optionsObj.label]
-                                    : itemOption.label}
-                                </Checkbox>
-                              );
-                            })}
-                        </Checkbox.Group>
-                      ) : null}
-                      {type === 'radio' ? (
-                        <Radio.Group
-                          style={{ width: '100%', textAlign: "left" }}
-                          className={classesForm}
-                          {...itemSecProps}
-                          onChange={e => {
-                            changeFun(e, itemSec);
-                            if (onChange) {
-                              onChange(e);
-                            }
-                          }}
-                          value={value}
-                        >
-                          {options &&
-                            options.map((itemOption: any, indexOption: number) => {
-                              return (
-                                <Radio
-                                  {...itemOption}
-                                  value={
-                                    optionsObj && optionsObj.value
-                                      ? `${itemOption[optionsObj.value]}`
-                                      : `${itemOption.value}`
-                                  }
-                                  key={
-                                    optionsObj && optionsObj.value
-                                      ? itemOption[optionsObj.value]
-                                      : itemOption.value
-                                  }
-                                >
-                                  {optionsObj && optionsObj.label
-                                    ? itemOption[optionsObj.label]
-                                    : itemOption.label}
-                                </Radio>
-                              );
-                            })}
-                        </Radio.Group>
-                      ) : null}
-                      {
-                        (checkForm || checkFormItem) && currentObjTip[key || name] && currentObjTip[key || name].error ?
-                          <div className="antdpackaging_tip">{currentObjTip[key || name].message}</div>
-                          : null
-                      }
-                    </div>
-                  </div>
-                </div>
+                <Form.Item
+                  {...itemSec}
+                >
+                  {initItems(itemSec)}
+                </Form.Item>
               </Col>
             );
           })}
@@ -629,15 +220,17 @@ export const FormComponent: FC<BaseProps> = (props) => {
   const classes = classNames('form_components', className)
   return (
     <ConfigProvider locale={zhCN}>
-      <div className={classes}>
+      <Form
+        form={form}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        autoComplete="off"
+        className={classes}
+        ref={cRef}
+      >
         {initHtml(sourceList)}
-      </div>
+      </Form>
     </ConfigProvider>
   )
 }
-FormComponent.defaultProps = {
-  size: 'middle',
-  checkForm: false
-}
-
 export default FormComponent;
