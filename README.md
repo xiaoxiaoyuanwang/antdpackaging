@@ -2,32 +2,32 @@
 
 ## 使用 React+typescript 的组件库
 
-
 ```bash
 
 对于antd表单的二次封装，便于项目中方便使用，减少代码书写，
-支持多种input、select、time方法，请参考antd
+支持多种input、select、time方法，支持form的所有属性，请参考antd
+
+
+示例：
 
 ```
 
 ```javascript
 // class用法
-  <FormComponent
-    sourceList={sourceList}
-    cRef={(childRef)=>this.childRef = childRef}
-  />
-
+<FormComponent
+  sourceList={sourceList}
+  ref={(childRef) => (this.childRef = childRef)}
+/>
 ```
 
 ```javascript
 // HOOK用法
 // const childRef = useRef(null);
 
-  <FormComponent
-    sourceList={sourceList}
-    cRef={childRef}
-  />
-
+<FormComponent
+  sourceList={sourceList}
+  ref={childRef}
+/>
 ```
 
 ```javascript
@@ -45,16 +45,7 @@ import { FormComponent } from "antdpackaging";
 
 // 代码示例
 function App() {
-  const childRef = useRef(null);
-  const [currentObj, setObj] = useState({
-    Username: "uu",
-    AreaLabel: ["shanghai"],
-    Area: "",
-    time: "",
-    timeRange: [],
-    checkbox: ["beijing", "shanghai"],
-    radio: "",
-  });
+  const childRef = useRef();
   let QuickSearch = [
     {
       key: "beijing",
@@ -69,115 +60,130 @@ function App() {
     },
   ];
   let sourceList = [
-    [
-      {
-        type: "input",
-        addonBefore: "http://",
+    {
+      type: "input",
+      addonBefore: "http://",
+      pattern: /^[0-9]*$/,
+      patternmsg: "请输入数字",
+      formitemprops: {
         label: "Username",
-        pattern: /^[0-9]*$/,
         name: "Username",
-        onChange: (e) => {
-          console.log("onChange", e);
-        },
       },
-      {
-        type: "select",
+      onChange: (e: any) => {
+        console.log("onChange", e);
+      },
+    },
+    {
+      type: "select",
+      mode: "multiple",
+      formitemprops: {
         label: "AreaLabel",
-        mode: "multiple",
-        options: QuickSearch,
-        optionsObj: { label: "key", value: "key" },
         name: "AreaLabel",
       },
-      {
-        type: "select",
+      options: QuickSearch,
+      optionsObj: { label: "key", value: "key" },
+    },
+    {
+      type: "select",
+      formitemprops: {
         label: "Area",
-        showSearch: true,
-        onSearch: (e) => {
-          console.log(e);
-        },
-        options: QuickSearch,
         name: "Area",
       },
-    ],
-    [
-      {
-        type: "time",
+      onSearch: (e: any) => {
+        console.log(e);
+      },
+      options: QuickSearch,
+    },
+    {
+      type: "time",
+      formitemprops: {
         label: "time",
         name: "time",
-        rules:[{ required: true }],
+        rules: [{ required: true }],
       },
-      {
-        type: "timeRange",
+    },
+    {
+      type: "timeRange",
+      label: "timeRange",
+      formitemprops: {
         label: "timeRange",
         name: "timeRange",
-      },
-    ],
-    [
-      {
-        type: "checkbox",
+      }
+    },
+    {
+      type: "checkbox",
+      formitemprops: {
         label: "checkbox",
-        options: QuickSearch,
-        optionsObj: { label: "value", value: "key" },
         name: "checkbox",
       },
-      {
-        type: "radio",
+      options: QuickSearch,
+      optionsObj: { label: "value", value: "key" },
+    },
+    {
+      type: "radio",
+      label: "radio",
+      formitemprops: {
         label: "radio",
-        options: QuickSearch,
         name: "radio",
       },
-      {
-        type: "buttons",
-        name: (
-          <div style={{ marginLeft: "10px", textAlign: "right" }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                query();
-              }}
-            >
-              获取数据
-            </Button>
-          </div>
-        ),
-      },
-    ],
+      options: QuickSearch,
+    }
   ];
- 
-  const query = () => {
 
-    childRef.current.form.validateFields()
-      .then(values => {
-        console.log(values);
-        
-      })
-      .catch(errorInfo => {
-        console.log(errorInfo);
-      })
+  const query = () => {
+    console.log(childRef.current);
+    if (childRef.current && childRef.current.form) {
+      childRef.current.form.validateFields()
+        .then((values: any) => {
+          console.log(values);
+
+        })
+        .catch((errorInfo: any) => {
+          console.log(errorInfo);
+        })
+    }
   };
-  useEffect(() => {
-    // 设置默认值
-    setTimeout(()=>{
-      if (childRef.current) {
-        childRef.current.form.setFieldsValue({ 
-          Username: currentObj.Username,
-          AreaLabel: currentObj.AreaLabel,
-          radio: currentObj.radio,
-          checkbox: currentObj.checkbox,
-         });
-      }
-    }, 100)
-  }, []);
-  return (
-    <div className="App">
-      <FormComponent
-        sourceList={sourceList}
-        cRef={childRef}
-      />
-    </div>
-  );
+  return <>
+    <FormComponent
+      sourceList={sourceList}
+      ref={childRef}
+      initialValues={{
+        'time': moment('2020-09-09'),
+      }}
+    />
+    <Button
+      type="primary"
+      onClick={() => {
+        query();
+      }}
+    >
+      获取数据
+    </Button>
+  </>
 }
 
 export default App;
 
-```
+<div>
+  <h3 style="margin: 20px 0px 0px;">FormComponent Component</h3>
+  <table class="info-table" style="width: 100%;">
+    <thead>
+      <tr>
+        <th width="10%" style="max-width: 10%;min-width: 10%;">property</th>
+        <th width="20%" style="max-width: 20%;min-width: 20%;">propType</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">required</th>
+        <th width="5%" style="max-width: 5%;min-width: 5%;">default</th>
+        <th width="60%" style="max-width: 60%;min-width: 60%;">description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="info-table-monospace">sourceList</td>
+        <td class="info-table-monospace"><span>object[]</span></td>
+        <td>yes</td>
+        <td>-</td>
+        <td>设置 数据源</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

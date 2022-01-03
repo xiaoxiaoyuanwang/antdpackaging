@@ -3,14 +3,11 @@ import {
   ConfigProvider,
   DatePicker,
   Input,
-  Row,
-  Col,
   Select,
   Checkbox,
   Radio,
   Form
 } from 'antd';
-import classNames from 'classnames'
 import moment from 'moment'
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -24,27 +21,27 @@ const { RangePicker } = DatePicker;
  * import { FormComponent } from 'antdpackaging'
  * ~~~
  */
-const FormComponent = (props: any) => {
+const FormComponent = React.forwardRef((props: any, ref) => {
   const {
-    className,
     sourceList,
-    cRef
+    ...formProps
   } = props
   const [form] = Form.useForm();
+  
   // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
-  useImperativeHandle(cRef, () => ({
+  useImperativeHandle(ref, () => ({
     // changeVal 就是暴露给父组件的方法
     form: form,
   }))
   // 选择表单类型
-  const initItems = (itemSec: any) => {
+  const initItems = (itemProps: any) => {
     const {
       optionsObj,
       type,
       name,
       options,
       ...itemSecProps
-    } = itemSec
+    } = itemProps
     let strDom = null
     switch (type) {
       case 'text':
@@ -69,11 +66,6 @@ const FormComponent = (props: any) => {
                 <Select.Option
                   {...itemOption}
                   items={itemOption}
-                  value={
-                    optionsObj && optionsObj.value
-                      ? `${itemOption[optionsObj.value]}`
-                      : `${itemOption.value}`
-                  }
                   key={
                     optionsObj && optionsObj.value
                       ? itemOption[optionsObj.value]
@@ -110,11 +102,6 @@ const FormComponent = (props: any) => {
               return (
                 <Checkbox
                   {...itemOption}
-                  value={
-                    optionsObj && optionsObj.value
-                      ? `${itemOption[optionsObj.value]}`
-                      : `${itemOption.value}`
-                  }
                   key={
                     optionsObj && optionsObj.value
                       ? itemOption[optionsObj.value]
@@ -138,11 +125,6 @@ const FormComponent = (props: any) => {
               return (
                 <Radio
                   {...itemOption}
-                  value={
-                    optionsObj && optionsObj.value
-                      ? `${itemOption[optionsObj.value]}`
-                      : `${itemOption.value}`
-                  }
                   key={
                     optionsObj && optionsObj.value
                       ? itemOption[optionsObj.value]
@@ -167,57 +149,20 @@ const FormComponent = (props: any) => {
     if (!data) {
       return;
     }
-    const classesRow = classNames('antdpackaging_row')
     return data.map((itemOne: any, indexOne: number) => {
-      return (
-        <Row key={indexOne} className={classesRow}>
-          {itemOne.map((itemSec: any, indexSec: number) => {
-            const {
-              type,
-              name,
-              colStyle,
-              colClassName,
-              md,
-            } = itemSec
-            const classesCol = classNames('antdpackaging_col', colClassName)
-            if (type === 'buttons') {
-              return (
-                <Col
-                  md={md || 8}
-                  sm={24}
-                  key={indexSec}
-                  className={classesCol}
-                  style={{
-                    ...colStyle
-                  }}
-                >
-                  {name}
-                </Col>
-              );
-            }
-            return (
-              <Col
-                md={md || 8}
-                sm={24}
-                key={indexSec}
-                className={classesCol}
-                style={{
-                  ...colStyle
-                }}
-              >
-                <Form.Item
-                  {...itemSec}
-                >
-                  {initItems(itemSec)}
-                </Form.Item>
-              </Col>
-            );
-          })}
-        </Row>
-      );
+      const {
+        formitemprops,
+        ...itemProps
+      } = itemOne
+      return <Form.Item
+        key={indexOne}
+        {...formitemprops}
+      >
+        {initItems({ ...itemProps })}
+      </Form.Item>
+
     });
   }
-  const classes = classNames('form_components', className)
   return (
     <ConfigProvider locale={zhCN}>
       <Form
@@ -225,12 +170,11 @@ const FormComponent = (props: any) => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         autoComplete="off"
-        className={classes}
-        ref={cRef}
+        {...formProps}
       >
         {initHtml(sourceList)}
       </Form>
     </ConfigProvider>
   )
-}
+})
 export default FormComponent;

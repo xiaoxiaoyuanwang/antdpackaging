@@ -1,16 +1,1 @@
 @import url(~antd/dist/antd.css);
-.form_components {
-  padding: 10px; }
-  .form_components .antdpackaging_row {
-    margin: 0 !important; }
-  .form_components .antdpackaging_row:not(:first-child) .antdpackaging_col {
-    padding-top: 10px; }
-  .form_components .antdpackaging_row:not(:first-child) .antdpackaging_status_col {
-    padding-top: 0px; }
-  .form_components .antdpackaging_row:not(:first-child) .antdpackaging_status_wrapper {
-    border-top: none; }
-  .form_components .antdpackaging_row:not(:last-child) .antdpackaging_status_col {
-    padding-bottom: 0px; }
-  .form_components .antdpackaging_col {
-    padding-left: 0 !important;
-    padding-right: 0 !important; }
