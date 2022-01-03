@@ -1,6 +1,6 @@
 {
   "name": "antdpackaging",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "antd components library",
   "author": "xiaoxiaoyuanwang",
   "private": false,
@@ -62,7 +62,6 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.12.3",
-    "classnames": "^2.2.6",
     "moment": "^2.29.1",
     "web-vitals": "^1.0.1"
   },
